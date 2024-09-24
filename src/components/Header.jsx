@@ -1,15 +1,15 @@
-
 import backgroundImage from '../assets/background2.jpg'; // Asegúrate de que la ruta sea correcta
 
 const Header = () => {
   return (
     <section
-      className="relative w-full bg-center flex flex-col justify-center items-center"
-      style={{ backgroundImage: `url(${backgroundImage})`, height: '100vh' }} // Asegura proporción de altura
+      className="relative w-full bg-center bg-cover flex flex-col justify-center items-center h-[600px]" // Ajusta la altura de la imagen
+      style={{ backgroundImage: `url(${backgroundImage})` }} // Imagen de fondo
     >
+      <div className="absolute inset-0 bg-black opacity-50"></div>
       <header className="relative text-white z-10"> {/* Mantener el texto por encima */}
-        <h1 className="text-10xl font-DancingScript">Bienvenido a mi sitio web</h1>
-        <p className="text-lg mt-4">¡Explora nuestras soluciones!</p>
+        <h1 className="text-10xl font-DancingScript">Bienvenido</h1>
+        <p className="text-lg mt-4 font-roboto">Tasca la Fundicion</p>
       </header>
     </section>
   );

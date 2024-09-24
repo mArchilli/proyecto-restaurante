@@ -6,7 +6,7 @@ import Contact from './components/Contact';
 
 const LandingPage = () => {
   return (
-    <div className="flex flex-col items-center justify-center h-screen space-y-16">
+    <div className="flex flex-col h-screen">
       <Navbar />
       <Header />
       <About />
