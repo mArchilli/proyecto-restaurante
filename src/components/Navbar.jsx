@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom'; // Importa Link de react-router-dom
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false); // Estado para controlar el menú desplegable
@@ -22,6 +23,10 @@ const Navbar = () => {
           <li><a href="#about" className="hover:text-gray-300 text-white">Sobre Nosotros</a></li>
           <li><a href="#menu" className="hover:text-gray-300 text-white">Menú</a></li>
           <li><a href="#contact" className="hover:text-gray-300 text-white">Contacto</a></li>
+          {/* Nuevo link para el login */}
+          <li>
+            <Link to="/login" className="hover:text-gray-300 text-white">Ingresar</Link> {/* Usa Link en lugar de a */}
+          </li>
         </ul>
       </div>
     </nav>
