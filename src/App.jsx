@@ -1,19 +1,19 @@
-import Header from './components/Header';
-import Navbar from './components/Navbar';
-import About from './components/About';
-import Menu from './components/Menu';
-import Contact from './components/Contact';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'; // Importa react-router-dom
+import LandingPage from './components/LandingPage';
+import Login from './components/Login'; // Importa el componente Login
 
-const LandingPage = () => {
+const App = () => {
   return (
-    <div className="flex flex-col h-screen">
-      <Navbar />
-      <Header />
-      <About />
-      <Menu />
-      <Contact />
-    </div>
+    <Router>
+      <Routes>
+        {/* Ruta principal para la landing page */}
+        <Route path="/" element={<LandingPage />} />
+        
+        {/* Ruta para el componente de login */}
+        <Route path="/login" element={<Login />} />
+      </Routes>
+    </Router>
   );
 };
 
-export default LandingPage;
+export default App;
