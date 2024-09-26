@@ -1,8 +1,24 @@
-import { useState } from 'react';
-import { Link } from 'react-router-dom'; // Importa Link de react-router-dom
+import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom'; // Seguimos usando Link
+import { auth } from '../services/firebase'; // Importa Firebase Auth
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false); // Estado para controlar el menú desplegable
+  const [isAuthenticated, setIsAuthenticated] = useState(false); // Estado para saber si el usuario está autenticado
+
+  // Efecto para verificar si el usuario está autenticado
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+      if (user) {
+        setIsAuthenticated(true); // Si hay usuario, está autenticado
+      } else {
+        setIsAuthenticated(false); // Si no, no está autenticado
+      }
+    });
+
+    // Limpia el listener cuando el componente se desmonte
+    return () => unsubscribe();
+  }, []);
 
   const toggleMenu = () => {
     setIsOpen(!isOpen); // Alternar el estado
@@ -23,9 +39,21 @@ const Navbar = () => {
           <li><a href="#about" className="hover:text-gray-300 text-white">Sobre Nosotros</a></li>
           <li><a href="#menu" className="hover:text-gray-300 text-white">Menú</a></li>
           <li><a href="#contact" className="hover:text-gray-300 text-white">Contacto</a></li>
-          <li>
-            <Link to="/login" className="hover:text-gray-300 text-white">Ingresar</Link> {/* Usa Link en lugar de a */}
-          </li>
+          
+          {/* Aquí se renderiza condicionalmente el Link según el estado de autenticación */}
+          {isAuthenticated ? (
+            <li>
+              <Link to="/upload-images" className="hover:text-gray-300 text-white">
+                Panel de Administración
+              </Link>
+            </li>
+          ) : (
+            <li>
+              <Link to="/login" className="hover:text-gray-300 text-white">
+                Ingresar
+              </Link>
+            </li>
+          )}
         </ul>
       </div>
     </nav>

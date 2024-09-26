@@ -1,12 +1,14 @@
 import { useState } from "react";
-import { storage, db } from "../services/firebase"; // Importa Firebase Storage y Firestore
+import { storage, db } from "../services/firebase";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { addDoc, collection } from "firebase/firestore";
-import { useNavigate } from "react-router-dom"; // Importa useNavigate para la redirección
+import { useNavigate } from "react-router-dom";
+import AdminNavbar from "./AdminNavbar"; // Importa el nuevo navbar de admin
 
 const ImageUpload = () => {
   const [image, setImage] = useState(null);
-  const navigate = useNavigate(); // Inicializa useNavigate para la redirección
+  const [previewUrl, setPreviewUrl] = useState(null); // Estado para la URL de la vista previa
+  const navigate = useNavigate();
 
   const handleImageUpload = async () => {
     if (image) {
@@ -24,31 +26,44 @@ const ImageUpload = () => {
     }
   };
 
-  // Función para redirigir al inicio
+  const handleFileChange = (e) => {
+    const selectedFile = e.target.files[0];
+    if (selectedFile) {
+      setImage(selectedFile); // Guarda el archivo seleccionado en el estado
+      setPreviewUrl(URL.createObjectURL(selectedFile)); // Crea la URL de la vista previa
+    }
+  };
+
   const goToHome = () => {
-    navigate("/"); // Redirige a la raíz del sitio (inicio)
+    navigate("/");
   };
 
   return (
-    <div className="flex flex-col items-center">
-      <input
-        type="file"
-        onChange={(e) => setImage(e.target.files[0])}
-        className="mb-4"
-      />
-      <button
-        onClick={handleImageUpload}
-        className="bg-blue-500 text-white py-2 px-4 rounded mb-4"
-      >
-        Subir Imagen
-      </button>
-      <button
-        onClick={goToHome}
-        className="bg-gray-500 text-white py-2 px-4 rounded"
-      >
-        Volver al Inicio
-      </button>
-    </div>
+    <>
+      <AdminNavbar /> {/* Muestra el navbar para administradores */}
+      <div className="flex flex-col items-center mt-24">
+        <input
+          type="file"
+          onChange={handleFileChange} // Maneja el cambio de archivo
+          className="mb-4"
+        />
+        {previewUrl && ( // Si hay una URL de previsualización, muestra la imagen
+          <img src={previewUrl} alt="Vista previa" className="mb-4 max-w-xs" />
+        )}
+        <button
+          onClick={handleImageUpload}
+          className="bg-blue-500 text-white py-2 px-4 rounded mb-4"
+        >
+          Subir Imagen
+        </button>
+        <button
+          onClick={goToHome}
+          className="bg-gray-500 text-white py-2 px-4 rounded"
+        >
+          Volver al Inicio
+        </button>
+      </div>
+    </>
   );
 };
 

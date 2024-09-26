@@ -3,6 +3,7 @@ import Navbar from '../components/Navbar';
 import About from '../components/About';
 import Menu from '../components/Menu';
 import Contact from '../components/Contact';
+import Footer from '../components/Footer';
 
 const LandingPage = () => {
   return (
@@ -12,6 +13,7 @@ const LandingPage = () => {
       <About />
       <Menu />
       <Contact />
+      <Footer />
     </div>
   );
 };
