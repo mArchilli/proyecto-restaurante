@@ -41,7 +41,10 @@ const ImageUpload = () => {
   return (
     <>
       <AdminNavbar /> {/* Muestra el navbar para administradores */}
+      
       <div className="flex flex-col items-center mt-24">
+        <h1 className="mb-5">Panel de Administracion</h1>
+        <h2 className="mb-5 text-2xl">Imagen de portada</h2>
         <input
           type="file"
           onChange={handleFileChange} // Maneja el cambio de archivo

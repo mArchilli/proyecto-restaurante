@@ -30,7 +30,7 @@ const Navbar = () => {
         <div className="text-2xl font-bold">Restaurante</div>
         <button 
           onClick={toggleMenu} 
-          className="md:hidden focus:outline-none"
+          className="md:hidden focus:outline-none bg-white text-black"
         >
           {isOpen ? 'Cerrar' : 'Menú'}
         </button>
