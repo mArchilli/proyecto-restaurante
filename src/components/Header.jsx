@@ -13,7 +13,7 @@ const Header = () => {
     //   </header>
     // </section>
 
-    <section className="w-full pt-14 pb-12 md:py-15 lg:py-20 xl:py-25">
+    <section className="w-full py-28 md:py-20 lg:py-25 xl:py-30">
       <div className="container px-4 md:px-6 mx-auto">
         <div className="flex flex-col items-center space-y-4 text-center">
           <div className="space-y-2">

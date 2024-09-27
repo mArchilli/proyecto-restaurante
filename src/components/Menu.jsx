@@ -95,16 +95,16 @@ export default function Menu() {
   return (
     <section id="menu" className="w-full py-12 md:py-24 lg:py-32 bg-muted">
       <div className="container md:px-6 mx-auto">
-        <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl mb-4 text-center">Our Menu</h2>
+        <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl mb-4 text-center">Cononce nuestro menu</h2>
         <p className="text-muted-foreground text-center mb-8">
-          Explore our carefully curated menu, featuring locally sourced ingredients and innovative flavors
+        Explora nuestro menú cuidadosamente seleccionado, con ingredientes de origen local y sabores innovadores.
         </p>
         
         <Tabs defaultValue="breakfast" onValueChange={setActiveTab}>
           <TabsList className="grid w-full grid-cols-3 mb-8">
-            <TabsTrigger value="breakfast">Breakfast</TabsTrigger>
-            <TabsTrigger value="lunch">Lunch</TabsTrigger>
-            <TabsTrigger value="dinner">Dinner</TabsTrigger>
+            <TabsTrigger value="breakfast">Bocadillos</TabsTrigger>
+            <TabsTrigger value="lunch">Sandwiches y Tostadas</TabsTrigger>
+            <TabsTrigger value="dinner">Especiales</TabsTrigger>
           </TabsList>
           {Object.entries(menuData).map(([mealTime, sections]) => (
             <TabsContent key={mealTime} value={mealTime}>
