@@ -2,6 +2,7 @@ import Header from '../components/Header';
 import Navbar from '../components/Navbar';
 import About from '../components/About';
 import Menu from '../components/Menu';
+import GridMenu from '../components/GridMenu';
 import Contact from '../components/Contact';
 import Footer from '../components/Footer';
 
@@ -11,6 +12,7 @@ const LandingPage = () => {
       <Navbar />
       <Header />
       <About />
+      <GridMenu />
       <Menu />
       <Contact />
       <Footer />
