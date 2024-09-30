@@ -8,7 +8,7 @@ import AdminNavbar from "./AdminNavbar";
 const ImageUpload = () => {
   const [image, setImage] = useState(null);
   const [previewUrl, setPreviewUrl] = useState(null);
-  const [folder, setFolder] = useState("menu"); // Mantener "menu" como carpeta por defecto
+  const [folder, setFolder] = useState("header"); // Mantener "header" como carpeta por defecto
   const [images, setImages] = useState([]); // Para previsualizar imágenes de la carpeta "menu"
   const [newImages, setNewImages] = useState({}); // Almacenar los archivos que serán reemplazados
   const [successMessage, setSuccessMessage] = useState("");
@@ -180,13 +180,13 @@ const ImageUpload = () => {
         </div>
 
         {/* Sección de imágenes del menú */}
-        <div className="bg-gray-100 rounded-lg p-6 w-full max-w-3xl">
+        <div className="bg-gray-100 rounded-lg p-6 w-full max-w-4xl">
           <h2 className="text-2xl mb-4">Imágenes del Menú</h2>
           {/* Mostrar las imágenes existentes de la carpeta "menu" */}
           {images.length > 0 ? (
             <div className="grid grid-cols-2 gap-4 mb-8">
               {images.map((image) => (
-                <div key={image.name} className="flex flex-col items-center border border-gray-300 rounded p-4">
+                <div key={image.name} className="flex flex-col items-center border border-gray-300 rounded py-4 px-20">
                   <img src={image.url} alt={image.name} className="mb-2 w-40 h-40 object-cover rounded" />
                   <input
                     type="file"
