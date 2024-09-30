@@ -135,76 +135,82 @@ const ImageUpload = () => {
       <AdminNavbar />
       <div className="flex flex-col items-center mt-24">
         <h1 className="mb-5">Panel de Administración</h1>
-        <h2 className="mb-5 text-2xl">Subir Imagen</h2>
 
-        {/* Selector para elegir la carpeta/sección */}
-        <label htmlFor="folderSelect" className="mb-2">
-          Selecciona la sección donde se subirá la imagen:
-        </label>
-        <select
-          id="folderSelect"
-          value={folder}
-          onChange={(e) => setFolder(e.target.value)}
-          className="mb-4 border border-gray-300 rounded px-3 py-2"
-        >
-          <option value="header">Header</option>
-          <option value="contact">Contacto</option>
-          <option value="footer">Footer</option>
-          <option value="menu">Menu</option>
-        </select>
+        {/* Sección de carga de imágenes */}
+        <div className="bg-white shadow-md rounded-lg p-6 mb-8 w-full max-w-md">
+          <h2 className="mb-5 text-2xl">Subir Imagen</h2>
 
-        {/* Campo de entrada para archivos */}
-        <input
-          type="file"
-          onChange={handleFileChange}
-          className="mb-4"
-        />
-        {previewUrl && (
-          <img src={previewUrl} alt="Vista previa" className="mb-4 max-w-xs" />
-        )}
-        {successMessage && (
-          <p className="text-green-500 mb-4">{successMessage}</p>
-        )}
-        {errorMessage && (
-          <p className="text-red-500 mb-4">{errorMessage}</p>
-        )}
-        <button
-          onClick={handleImageUpload}
-          className="bg-blue-500 text-white py-2 px-4 rounded mb-4"
-        >
-          Subir Imagen
-        </button>
+          {/* Selector para elegir la carpeta/sección */}
+          <label htmlFor="folderSelect" className="mb-2">
+            Selecciona la sección donde se subirá la imagen:
+          </label>
+          <select
+            id="folderSelect"
+            value={folder}
+            onChange={(e) => setFolder(e.target.value)}
+            className="mb-4 border border-gray-300 rounded px-3 py-2"
+          >
+            <option value="header">Header</option>
+            <option value="contact">Contacto</option>
+            <option value="footer">Footer</option>
+            <option value="menu">Menu</option>
+          </select>
 
-        {/* Mostrar las imágenes existentes de la carpeta "menu" */}
-        {images.length > 0 && (
-          <div className="grid grid-cols-2 gap-4 mb-8">
-            {images.map((image) => (
-              <div key={image.name} className="flex flex-col items-center">
-                <img src={image.url} alt={image.name} className="mb-2 w-40 h-40 object-cover" />
-                <input
-                  type="file"
-                  onChange={(e) => handleFileChangeMenu(e, image.name)}
-                  className="mb-2"
-                />
-                <button
-                  onClick={() => handleReplaceImage(image.name)}
-                  className="bg-blue-500 text-white py-1 px-3 rounded"
-                  disabled={!newImages[image.name]} // Deshabilitar si no hay nueva imagen seleccionada
-                >
-                  Reemplazar Imagen
-                </button>
-              </div>
-            ))}
-          </div>
-        )}
+          {/* Campo de entrada para archivos */}
+          <input
+            type="file"
+            onChange={handleFileChange}
+            className="mb-4 border border-gray-300 rounded px-3 py-2"
+          />
+          {previewUrl && (
+            <img src={previewUrl} alt="Vista previa" className="mb-4 max-w-xs rounded" />
+          )}
+          {successMessage && (
+            <p className="text-green-500 mb-4">{successMessage}</p>
+          )}
+          {errorMessage && (
+            <p className="text-red-500 mb-4">{errorMessage}</p>
+          )}
+          <button
+            onClick={handleImageUpload}
+            className="bg-blue-500 text-white py-2 px-4 rounded mb-4"
+          >
+            Subir Imagen
+          </button>
+        </div>
 
-        {images.length === 0 && (
-          <p>No hay imágenes en la carpeta "menu" actualmente.</p>
-        )}
+        {/* Sección de imágenes del menú */}
+        <div className="bg-gray-100 rounded-lg p-6 w-full max-w-3xl">
+          <h2 className="text-2xl mb-4">Imágenes del Menú</h2>
+          {/* Mostrar las imágenes existentes de la carpeta "menu" */}
+          {images.length > 0 ? (
+            <div className="grid grid-cols-2 gap-4 mb-8">
+              {images.map((image) => (
+                <div key={image.name} className="flex flex-col items-center border border-gray-300 rounded p-4">
+                  <img src={image.url} alt={image.name} className="mb-2 w-40 h-40 object-cover rounded" />
+                  <input
+                    type="file"
+                    onChange={(e) => handleFileChangeMenu(e, image.name)}
+                    className="mb-2 border border-gray-300 rounded px-3 py-2"
+                  />
+                  <button
+                    onClick={() => handleReplaceImage(image.name)}
+                    className="bg-blue-500 text-white py-1 px-3 rounded"
+                    disabled={!newImages[image.name]} // Deshabilitar si no hay nueva imagen seleccionada
+                  >
+                    Reemplazar Imagen
+                  </button>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p>No hay imágenes en la carpeta menu actualmente.</p>
+          )}
+        </div>
 
         <button
           onClick={goToHome}
-          className="bg-gray-500 text-white py-2 px-4 rounded"
+          className="bg-gray-500 text-white py-2 px-4 rounded mt-4"
         >
           Volver al Inicio
         </button>
