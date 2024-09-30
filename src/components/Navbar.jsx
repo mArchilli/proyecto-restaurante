@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom'; // Seguimos usando Link
+// import { Link } from 'react-router-dom'; // Seguimos usando Link
 import { auth } from '../services/firebase'; // Importa Firebase Auth
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false); // Estado para controlar el menú desplegable
-  const [isAuthenticated, setIsAuthenticated] = useState(false); // Estado para saber si el usuario está autenticado
+  // const [isAuthenticated, setIsAuthenticated] = useState(false); // Estado para saber si el usuario está autenticado
+  const [setIsAuthenticated] = useState(false); 
 
   // Efecto para verificar si el usuario está autenticado
   useEffect(() => {
@@ -41,7 +42,7 @@ const Navbar = () => {
           <li><a href="#contact" className="hover:text-gray-300 text-white">Contacto</a></li>
           
           {/* Aquí se renderiza condicionalmente el Link según el estado de autenticación */}
-          {isAuthenticated ? (
+          {/* {isAuthenticated ? (
             <li>
               <Link to="/upload-images" className="hover:text-gray-300 text-white">
                 Panel de Administración
@@ -53,7 +54,7 @@ const Navbar = () => {
                 Ingresar
               </Link>
             </li>
-          )}
+          )} */}
         </ul>
       </div>
     </nav>
