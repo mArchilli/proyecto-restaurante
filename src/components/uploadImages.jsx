@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { storage, db } from "../services/firebase";
-import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { ref, uploadBytes, getDownloadURL, deleteObject } from "firebase/storage";
 import { addDoc, collection } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
 import AdminNavbar from "./AdminNavbar";
@@ -34,6 +34,11 @@ const ImageUpload = () => {
       try {
         const imageName = getImageFileName(); // Obtiene el nombre predeterminado
         const storageRef = ref(storage, `images/${folder}/${imageName}`);
+        
+        // Elimina la imagen existente si hay una
+        await deleteExistingImage();
+
+        // Sube la nueva imagen
         await uploadBytes(storageRef, image);
         const downloadURL = await getDownloadURL(storageRef);
 
@@ -50,6 +55,18 @@ const ImageUpload = () => {
         setErrorMessage("Error al subir la imagen. Por favor, intenta nuevamente.", error.errorMessage);
         setSuccessMessage("");
       }
+    }
+  };
+
+  // Función para eliminar la imagen existente
+  const deleteExistingImage = async () => {
+    const imageName = getImageFileName(); // Obtiene el nombre predeterminado
+    const storageRef = ref(storage, `images/${folder}/${imageName}`);
+
+    try {
+      await deleteObject(storageRef); // Elimina la imagen
+    } catch (error) {
+      console.error("Error al eliminar la imagen:", error);
     }
   };
 
