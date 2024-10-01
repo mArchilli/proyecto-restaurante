@@ -159,6 +159,7 @@ const ImageUpload = () => {
             <option value="bocadillos">Bocadillos</option>
             <option value="sandwiches">Sandwiches y Tostadas</option>
             <option value="especiales">Especiales</option>
+            <option value="about">Sobre nosotros</option>
             <option value="menu">Menu</option>
           </select>
 

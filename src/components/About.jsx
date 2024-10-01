@@ -1,18 +1,39 @@
-
+import { useEffect, useState } from 'react';
+import { storage } from '../services/firebase';
+import { ref, getDownloadURL } from 'firebase/storage';
 
 const About = () => {
+  const [imageUrl, setImageUrl] = useState('');
+
+  // Función para obtener la URL de la imagen de Firebase
+  const fetchImage = async () => {
+    try {
+      const imageRef = ref(storage, 'images/about/about1.jpg'); // Cambia 'imagen.jpg' por el nombre real de tu imagen
+      const url = await getDownloadURL(imageRef);
+      setImageUrl(url);
+    } catch (error) {
+      console.error('Error al obtener la imagen de Firebase:', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchImage();
+  }, []);
+
   return (
-    <section id="about" className="w-full py-6 md:py-12 lg:py-16">
-      <div className="container px-4 md:px-6 mx-auto">
+    <section id="about" className="w-full py-6 md:py-12 lg:py-16 bg-gray-100">
+      <div className="container px-4 md:px-6 mx-auto ">
         <div className="grid gap-6 lg:grid-cols-2 lg:gap-12 items-center">
-          <h2>Insertar Imagen</h2>
+          {imageUrl && (
+            <img src={imageUrl} alt="Descripción de la imagen" className="w-full h-auto rounded-lg" />
+          )}
           <div className="flex flex-col justify-center space-y-4">
             <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl">Conoce Tosca La Fundicion</h2>
             <p className="max-w-[600px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
-            Fundada en 2010, Gourmet Haven lleva más de una década sirviendo cocina exquisita a los entusiastas de la comida. Nuestra pasión por la excelencia culinaria y el compromiso de utilizar los mejores ingredientes locales nos distinguen.
+              Fundada en 2010, Gourmet Haven lleva más de una década sirviendo cocina exquisita a los entusiastas de la comida. Nuestra pasión por la excelencia culinaria y el compromiso de utilizar los mejores ingredientes locales nos distinguen.
             </p>
             <p className="max-w-[600px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
-            Dirigido por la galardonada chef María Rodríguez, nuestro equipo de cocina elabora cada plato con precisión y creatividad, garantizando una experiencia gastronómica inolvidable para cada huésped.
+              Dirigido por la galardonada chef María Rodríguez, nuestro equipo de cocina elabora cada plato con precisión y creatividad, garantizando una experiencia gastronómica inolvidable para cada huésped.
             </p>
           </div>
         </div>
