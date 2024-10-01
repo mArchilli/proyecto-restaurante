@@ -8,21 +8,21 @@ import AdminNavbar from "./AdminNavbar";
 const ImageUpload = () => {
   const [image, setImage] = useState(null);
   const [previewUrl, setPreviewUrl] = useState(null);
-  const [folder, setFolder] = useState("header"); // Mantener "header" como carpeta por defecto
-  const [images, setImages] = useState([]); // Para previsualizar imágenes de la carpeta "menu"
-  const [newImages, setNewImages] = useState({}); // Almacenar los archivos que serán reemplazados
+  const [folder, setFolder] = useState("bocadillos"); // "bocadillos" como carpeta por defecto
+  const [images, setImages] = useState([]); // Imágenes actuales en la carpeta seleccionada
+  const [newImages, setNewImages] = useState({}); // Nuevas imágenes para reemplazo
   const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetchImages(); // Cargar imágenes al iniciar
-  }, []); // No dependemos del "folder" aquí
+    if (folder) fetchImages(); // Cargar imágenes cada vez que cambie la carpeta seleccionada
+  }, [folder]);
 
-  // Cargar imágenes de la carpeta "menu" automáticamente
+  // Función para cargar las imágenes de la carpeta seleccionada
   const fetchImages = async () => {
     try {
-      const folderRef = ref(storage, `images/menu/`); // Solo cargamos de "menu"
+      const folderRef = ref(storage, `images/${folder}/`);
       const result = await listAll(folderRef);
       const imageUrls = await Promise.all(
         result.items.map(async (itemRef) => {
@@ -32,8 +32,8 @@ const ImageUpload = () => {
       );
       setImages(imageUrls);
     } catch (error) {
-      console.error("Error al cargar las imágenes:", error);
-      setErrorMessage("Error al cargar las imágenes.");
+      console.error(`Error al cargar las imágenes de la carpeta ${folder}:`, error);
+      setErrorMessage(`Error al cargar las imágenes de la carpeta ${folder}.`);
     }
   };
 
@@ -47,7 +47,7 @@ const ImageUpload = () => {
   const handleReplaceImage = async (imageName) => {
     if (newImages[imageName]) {
       try {
-        const storageRef = ref(storage, `images/menu/${imageName}`);
+        const storageRef = ref(storage, `images/${folder}/${imageName}`);
         await deleteObject(storageRef);
         await uploadBytes(storageRef, newImages[imageName]);
         const downloadURL = await getDownloadURL(storageRef);
@@ -55,7 +55,7 @@ const ImageUpload = () => {
         // Actualizar Firestore si es necesario
         await addDoc(collection(db, "images"), {
           url: downloadURL,
-          folder: "menu",
+          folder,
           timestamp: Date.now(),
         });
 
@@ -88,21 +88,22 @@ const ImageUpload = () => {
   const handleImageUpload = async () => {
     if (image) {
       try {
-        const imageName = getImageFileName();
+        const imageName = await getImageFileName(); // Obtener el nombre del archivo
         const storageRef = ref(storage, `images/${folder}/${imageName}`);
 
-        await deleteExistingImage();
+        await deleteExistingImage(imageName);
         await uploadBytes(storageRef, image);
         const downloadURL = await getDownloadURL(storageRef);
 
         await addDoc(collection(db, "images"), {
           url: downloadURL,
-          folder: folder,
+          folder,
           timestamp: Date.now(),
         });
 
         setSuccessMessage(`Imagen subida exitosamente a la carpeta: ${folder}`);
         setErrorMessage("");
+        fetchImages(); // Recargar imágenes para actualizar la lista
       } catch (error) {
         setErrorMessage("Error al subir la imagen. Por favor, intenta nuevamente.");
         setSuccessMessage("");
@@ -111,18 +112,20 @@ const ImageUpload = () => {
     }
   };
 
-  const getImageFileName = () => {
-    return `${folder}-imagen.jpg`; // Nombre genérico basado en la carpeta seleccionada
+  // Función para generar el nombre de la imagen basado en la carpeta
+  const getImageFileName = async () => {
+    const folderRef = ref(storage, `images/${folder}/`);
+    const result = await listAll(folderRef);
+    const nextImageNumber = result.items.length + 1; // Siguiente número secuencial
+    return `${folder}${nextImageNumber}.jpg`; // Por ejemplo, bocadillo1.jpg
   };
 
-  const deleteExistingImage = async () => {
-    const imageName = getImageFileName();
+  const deleteExistingImage = async (imageName) => {
     const storageRef = ref(storage, `images/${folder}/${imageName}`);
-
     try {
-      await deleteObject(storageRef); // Elimina la imagen existente
+      await deleteObject(storageRef);
     } catch (error) {
-      console.error("Error al eliminar la imagen:", error);
+      console.error(`Error al eliminar la imagen ${imageName}:`, error);
     }
   };
 
@@ -142,7 +145,7 @@ const ImageUpload = () => {
 
           {/* Selector para elegir la carpeta/sección */}
           <label htmlFor="folderSelect" className="mb-2">
-            Selecciona la sección donde se subirá la imagen:
+            Selecciona la categoría:
           </label>
           <select
             id="folderSelect"
@@ -153,6 +156,9 @@ const ImageUpload = () => {
             <option value="header">Header</option>
             <option value="contact">Contacto</option>
             <option value="footer">Footer</option>
+            <option value="bocadillos">Bocadillos</option>
+            <option value="sandwiches">Sandwiches y Tostadas</option>
+            <option value="especiales">Especiales</option>
             <option value="menu">Menu</option>
           </select>
 
@@ -179,10 +185,9 @@ const ImageUpload = () => {
           </button>
         </div>
 
-        {/* Sección de imágenes del menú */}
+        {/* Sección de imágenes de la categoría seleccionada */}
         <div className="bg-gray-100 rounded-lg p-6 w-full max-w-4xl">
-          <h2 className="text-2xl mb-4">Imágenes del Menú</h2>
-          {/* Mostrar las imágenes existentes de la carpeta "menu" */}
+          <h2 className="text-2xl mb-4">Imágenes de {folder}</h2>
           {images.length > 0 ? (
             <div className="grid grid-cols-2 gap-4 mb-8">
               {images.map((image) => (
@@ -204,15 +209,15 @@ const ImageUpload = () => {
               ))}
             </div>
           ) : (
-            <p>No hay imágenes en la carpeta menu actualmente.</p>
+            <p>No hay imágenes en la carpeta {folder} actualmente.</p>
           )}
         </div>
 
         <button
           onClick={goToHome}
-          className="bg-gray-500 text-white py-2 px-4 rounded mt-4"
+          className="mt-4 bg-blue-500 text-white py-2 px-4 rounded"
         >
-          Volver al Inicio
+          Ir a la página principal
         </button>
       </div>
     </>

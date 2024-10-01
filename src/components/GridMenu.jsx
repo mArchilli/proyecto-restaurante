@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import { storage } from '../services/firebase'; // Asegúrate de que esta ruta sea correcta
 import { ref, getDownloadURL } from 'firebase/storage';
+import { Button } from './ui/Button';
+import { Tabs, TabsList, TabsTrigger } from './ui/Tabs';
 
 const GridMenu = () => {
   const [images, setImages] = useState([]);
@@ -49,10 +51,24 @@ const GridMenu = () => {
     setCurrentImage(null);
   };
 
+  const [setActiveTab] = useState("breakfast");
+
   return (
     <div className="container mx-auto px-4 py-8">
       {/* Agregar título */}
       <h2 className="text-3xl font-bold text-center mb-6">Menu</h2>
+      <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl mb-4 text-center">Cononce nuestro menu</h2>
+        <p className="text-muted-foreground text-center mb-8">
+        Explora nuestro menú cuidadosamente seleccionado, con ingredientes de origen local y sabores innovadores.
+        </p>
+        
+        <Tabs defaultValue="breakfast" onValueChange={setActiveTab}>
+          <TabsList className="grid w-full grid-cols-3 mb-8">
+            <TabsTrigger value="breakfast">Bocadillos</TabsTrigger>
+            <TabsTrigger value="lunch">Sandwiches y Tostadas</TabsTrigger>
+            <TabsTrigger value="dinner">Especiales</TabsTrigger>
+          </TabsList>
+        </Tabs>
 
       {/* Grilla de imágenes */}
       <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
@@ -75,6 +91,13 @@ const GridMenu = () => {
             />
           </div>
         ))}
+      </div>
+
+      <div className="mt-12 text-center">
+          <p className="text-sm text-muted-foreground mb-4">
+            V - Vegetarian | GF - Gluten-Free
+          </p>
+          <Button variant="outline">Download Full Menu (PDF)</Button>
       </div>
 
       {/* Modal */}
