@@ -1,74 +1,51 @@
 import { useEffect, useState } from 'react';
-import { storage } from '../services/firebase'; // Asegúrate de que esta ruta sea correcta
+import { storage } from '../services/firebase';
 import { ref, getDownloadURL } from 'firebase/storage';
-import { Button } from './ui/Button';
 import { Tabs, TabsList, TabsTrigger } from './ui/Tabs';
 
 const GridMenu = () => {
   const [images, setImages] = useState([]);
-  const [isOpen, setIsOpen] = useState(false);
-  const [currentImage, setCurrentImage] = useState(null);
+  const [activeTab, setActiveTab] = useState('bocadillos'); // Tab por defecto
+
+  // Función para obtener imágenes según la categoría
+  const fetchImages = async (folder) => {
+    try {
+      const imageRefs = Array.from({ length: 6 }, (_, i) =>
+        ref(storage, `images/${folder}/${folder}${i + 1}.jpg`) // Usa el nombre de la carpeta
+      );
+      const imageUrls = await Promise.all(
+        imageRefs.map((imageRef) => getDownloadURL(imageRef))
+      );
+
+      const imagesData = imageUrls.map((url, index) => ({
+        id: index + 1,
+        src: url,
+        alt: `${folder} ${index + 1}`,
+      }));
+
+      setImages(imagesData); // Actualiza las imágenes según la categoría
+    } catch (error) {
+      console.error(`Error al obtener las imágenes de la carpeta ${folder}:`, error);
+    }
+  };
 
   useEffect(() => {
-    const fetchImages = async () => {
-      try {
-        const imageRefs = [
-          ref(storage, 'images/menu/menu-imagen1.jpg'),
-          ref(storage, 'images/menu/menu-imagen2.jpg'),
-          ref(storage, 'images/menu/menu-imagen3.jpg'),
-          ref(storage, 'images/menu/menu-imagen4.jpg'),
-          ref(storage, 'images/menu/menu-imagen5.jpg'),
-          ref(storage, 'images/menu/menu-imagen6.jpg'),
-          ref(storage, 'images/menu/menu-imagen7.jpg'),
-        ];
-
-        const imageUrls = await Promise.all(
-          imageRefs.map((imageRef) => getDownloadURL(imageRef))
-        );
-
-        const imagesData = imageUrls.map((url, index) => ({
-          id: index + 1,
-          src: url,
-          alt: `Imagen ${index + 1}`,
-        }));
-
-        setImages(imagesData); // Guarda las imágenes en el estado
-      } catch (error) {
-        console.error('Error al obtener las imágenes:', error);
-      }
-    };
-
-    fetchImages();
-  }, []);
-
-  const openModal = (image) => {
-    setCurrentImage(image);
-    setIsOpen(true);
-  };
-
-  const closeModal = () => {
-    setIsOpen(false);
-    setCurrentImage(null);
-  };
-
-  const [setActiveTab] = useState("breakfast");
+    fetchImages(activeTab); // Llama a la función cada vez que cambia la categoría
+  }, [activeTab]);
 
   return (
     <div className="container mx-auto px-4 py-8">
-      {/* Agregar título */}
-      <h2 className="text-3xl font-bold text-center mb-6">Menu</h2>
-      <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl mb-4 text-center">Cononce nuestro menu</h2>
-        <p className="text-muted-foreground text-center mb-8">
-        Explora nuestro menú cuidadosamente seleccionado, con ingredientes de origen local y sabores innovadores.
-        </p>
-        
-        <Tabs defaultValue="breakfast" onValueChange={setActiveTab}>
-          <TabsList className="grid w-full grid-cols-3 mb-8">
-            <TabsTrigger value="breakfast">Bocadillos</TabsTrigger>
-            <TabsTrigger value="lunch">Sandwiches y Tostadas</TabsTrigger>
-            <TabsTrigger value="dinner">Especiales</TabsTrigger>
-          </TabsList>
-        </Tabs>
+      {/* Título */}
+      <h2 className="text-3xl font-bold tracking-tighter text-center mb-4">Conoce nuestro menú</h2>
+
+      {/* Tabs para seleccionar la categoría */}
+      <Tabs defaultValue={activeTab} onValueChange={setActiveTab}>
+        <TabsList className="grid w-full grid-cols-3 mb-8">
+          <TabsTrigger value="bocadillos">Bocadillos</TabsTrigger>
+          <TabsTrigger value="sandwiches">Sandwiches y Tostadas</TabsTrigger>
+          <TabsTrigger value="especiales">Especiales</TabsTrigger>
+        </TabsList>
+      </Tabs>
 
       {/* Grilla de imágenes */}
       <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
@@ -82,7 +59,6 @@ const GridMenu = () => {
                 ? 'col-span-1 row-span-2' // Otras ocupan 1 columna y 2 filas
                 : 'col-span-1 row-span-1' // El resto mantiene el tamaño regular
             }`}
-            onClick={() => openModal(image)}
           >
             <img
               src={image.src}
@@ -92,34 +68,6 @@ const GridMenu = () => {
           </div>
         ))}
       </div>
-
-      <div className="mt-12 text-center">
-          <p className="text-sm text-muted-foreground mb-4">
-            V - Vegetarian | GF - Gluten-Free
-          </p>
-          <Button variant="outline">Download Full Menu (PDF)</Button>
-      </div>
-
-      {/* Modal */}
-      {isOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white p-4 rounded-lg shadow-lg max-w-md w-full">
-            <button className="text-red-500 mb-4" onClick={closeModal}>
-              Cerrar
-            </button>
-            {currentImage && (
-              <div>
-                <img
-                  src={currentImage.src}
-                  alt={currentImage.alt}
-                  className="w-full h-auto rounded-lg"
-                />
-                <p className="mt-2 text-center">{currentImage.alt}</p>
-              </div>
-            )}
-          </div>
-        </div>
-      )}
     </div>
   );
 };
