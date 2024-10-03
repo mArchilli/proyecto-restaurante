@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 import { storage } from '../services/firebase';
 import { ref, getDownloadURL } from 'firebase/storage';
-import { db } from '../services/firebase'; // Importa Firestore
-import { collection, getDocs, query, where } from 'firebase/firestore'; // Importa las funciones necesarias
+import { db } from '../services/firebase'; 
+import { collection, getDocs, query, where } from 'firebase/firestore'; 
 import { Tabs, TabsList, TabsTrigger } from './ui/Tabs';
 import { Button } from './ui/Button';
 import Modal from 'react-modal';
@@ -12,7 +12,7 @@ const GridMenu = () => {
   const [activeTab, setActiveTab] = useState('bocadillos');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalContent, setModalContent] = useState(null);
-  const [products, setProducts] = useState([]); // Para almacenar los productos de Firestore
+  const [products, setProducts] = useState([]); 
 
   const fetchImages = async (folder) => {
     try {
@@ -33,11 +33,10 @@ const GridMenu = () => {
     }
   };
 
-  // Nueva función para obtener productos desde Firestore
   const fetchProducts = async (category) => {
     try {
-      const productsCollection = collection(db, 'products'); // Usa la colección 'products'
-      const q = query(productsCollection, where('category', '==', category)); // Filtra por categoría
+      const productsCollection = collection(db, 'products');
+      const q = query(productsCollection, where('category', '==', category));
       const productSnapshot = await getDocs(q);
       const productsData = productSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
       setProducts(productsData);
@@ -48,18 +47,22 @@ const GridMenu = () => {
 
   useEffect(() => {
     fetchImages(activeTab);
-    fetchProducts(activeTab); // Carga los productos cada vez que cambia la pestaña
+    fetchProducts(activeTab); 
   }, [activeTab]);
 
-  const openModal = (image) => {
+  const openModal = () => {
     const menuContent = (
       <div>
         <h2 className="text-2xl font-bold mb-4">{`Menú de ${activeTab.charAt(0).toUpperCase() + activeTab.slice(1)}`}</h2>
         <ul>
           {products.map(product => (
-            <li key={product.id}>
-              {product.name} - ${product.price}
-              <p>{product.description}</p>
+            <li key={product.id} className="mb-6">
+              <div className="flex justify-between items-center">
+                <h3 className="text-xl font-semibold">{product.name}</h3>
+                <span className="text-lg font-medium">${product.price}</span>
+              </div>
+              <p className="text-sm text-gray-600">{product.description}</p>
+              <hr className="mt-4 border-gray-300" />
             </li>
           ))}
         </ul>
@@ -96,7 +99,7 @@ const GridMenu = () => {
           <div
             key={image.id}
             className={`relative cursor-pointer ${getImageClasses(index)}`}
-            onClick={() => openModal(image)}
+            onClick={openModal}
           >
             <img
               src={image.src}
