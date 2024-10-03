@@ -1,17 +1,19 @@
 import { useEffect, useState } from 'react';
 import { storage } from '../services/firebase';
 import { ref, getDownloadURL } from 'firebase/storage';
+import { db } from '../services/firebase'; // Importa Firestore
+import { collection, getDocs, query, where } from 'firebase/firestore'; // Importa las funciones necesarias
 import { Tabs, TabsList, TabsTrigger } from './ui/Tabs';
 import { Button } from './ui/Button';
 import Modal from 'react-modal';
 
 const GridMenu = () => {
   const [images, setImages] = useState([]);
-  const [activeTab, setActiveTab] = useState('bocadillos'); // Tab por defecto
-  const [isModalOpen, setIsModalOpen] = useState(false); // Estado para controlar la visibilidad de la modal
-  const [modalContent, setModalContent] = useState(null); // Contenido del menú en la modal
+  const [activeTab, setActiveTab] = useState('bocadillos');
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [modalContent, setModalContent] = useState(null);
+  const [products, setProducts] = useState([]); // Para almacenar los productos de Firestore
 
-  // Función para obtener imágenes según la categoría
   const fetchImages = async (folder) => {
     try {
       const imageRefs = Array.from({ length: 7 }, (_, i) =>
@@ -31,66 +33,49 @@ const GridMenu = () => {
     }
   };
 
+  // Nueva función para obtener productos desde Firestore
+  const fetchProducts = async (category) => {
+    try {
+      const productsCollection = collection(db, 'products'); // Usa la colección 'products'
+      const q = query(productsCollection, where('category', '==', category)); // Filtra por categoría
+      const productSnapshot = await getDocs(q);
+      const productsData = productSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      setProducts(productsData);
+    } catch (error) {
+      console.error(`Error al obtener los productos de la categoría ${category}:`, error);
+    }
+  };
+
   useEffect(() => {
     fetchImages(activeTab);
+    fetchProducts(activeTab); // Carga los productos cada vez que cambia la pestaña
   }, [activeTab]);
 
-  // Función para abrir la modal con el contenido correspondiente
   const openModal = (image) => {
-    const menuContent = getMenuContent(image.alt.split(' ')[0]); // Obtiene el menú según el tipo
+    const menuContent = (
+      <div>
+        <h2 className="text-2xl font-bold mb-4">{`Menú de ${activeTab.charAt(0).toUpperCase() + activeTab.slice(1)}`}</h2>
+        <ul>
+          {products.map(product => (
+            <li key={product.id}>
+              {product.name} - ${product.price}
+              <p>{product.description}</p>
+            </li>
+          ))}
+        </ul>
+      </div>
+    );
     setModalContent(menuContent);
     setIsModalOpen(true);
   };
 
-  // Función para obtener las clases de cada imagen
   const getImageClasses = (index) => {
     if (index % 5 === 0) {
-      return 'col-span-2 row-span-1'; // Algunas imágenes ocupan 2 columnas y 1 fila
+      return 'col-span-2 row-span-1';
     } else if (index % 3 === 0) {
-      return 'col-span-1 row-span-2'; // Otras ocupan 1 columna y 2 filas
+      return 'col-span-1 row-span-2';
     } else {
-      return 'col-span-1 row-span-1'; // El resto mantiene el tamaño regular
-    }
-  };
-
-  // Contenido de los menús según la categoría
-  const getMenuContent = (category) => {
-    switch (category) {
-      case 'bocadillos':
-        return (
-          <div>
-            <h2 className="text-2xl font-bold mb-4">Menú de Bocadillos</h2>
-            <ul>
-              <li>Bocadillo 1 - $5.99</li>
-              <li>Bocadillo 2 - $6.99</li>
-              <li>Bocadillo 3 - $7.99</li>
-            </ul>
-          </div>
-        );
-      case 'sandwiches':
-        return (
-          <div>
-            <h2 className="text-2xl font-bold mb-4">Menú de Sandwiches</h2>
-            <ul>
-              <li>Sandwich 1 - $8.99</li>
-              <li>Sandwich 2 - $9.99</li>
-              <li>Sandwich 3 - $10.99</li>
-            </ul>
-          </div>
-        );
-      case 'especiales':
-        return (
-          <div>
-            <h2 className="text-2xl font-bold mb-4">Menú de Especiales</h2>
-            <ul>
-              <li>Especial 1 - $12.99</li>
-              <li>Especial 2 - $13.99</li>
-              <li>Especial 3 - $14.99</li>
-            </ul>
-          </div>
-        );
-      default:
-        return <div>No hay menú disponible.</div>;
+      return 'col-span-1 row-span-1';
     }
   };
 
@@ -123,11 +108,11 @@ const GridMenu = () => {
       </div>
 
       <div className="mt-12 text-center">
-          <p className="text-sm text-muted-foreground mb-4">
-            V - Vegetarian | GF - Gluten-Free
-          </p>
-          <Button variant="outline">Download Full Menu (PDF)</Button>
-        </div>
+        <p className="text-sm text-muted-foreground mb-4">
+          V - Vegetarian | GF - Gluten-Free
+        </p>
+        <Button variant="outline">Download Full Menu (PDF)</Button>
+      </div>
 
       {/* Modal */}
       <Modal
@@ -136,7 +121,7 @@ const GridMenu = () => {
         contentLabel="Menú"
         style={{
           overlay: {
-            backgroundColor: 'rgba(0, 0, 0, 0.5)', // Fondo oscuro translúcido
+            backgroundColor: 'rgba(0, 0, 0, 0.5)',
           },
           content: {
             top: '50%',
@@ -144,13 +129,13 @@ const GridMenu = () => {
             right: 'auto',
             bottom: 'auto',
             marginRight: '-50%',
-            transform: 'translate(-50%, -50%)', // Centra la modal
-            width: '80%', // Anchura ajustable
-            maxWidth: '500px', // Máximo ancho
+            transform: 'translate(-50%, -50%)',
+            width: '80%',
+            maxWidth: '500px',
             height: 'auto',
-            padding: '20px', // Espacio alrededor del contenido
-            borderRadius: '8px', // Bordes redondeados
-            backgroundColor: '#fff', // Fondo blanco
+            padding: '20px',
+            borderRadius: '8px',
+            backgroundColor: '#fff',
           },
         }}
       >
