@@ -224,12 +224,15 @@ const ImageUpload = () => {
           </label>
           <select
             id="folderSelect"
-            value={folder}
-            onChange={(e) => setFolder(e.target.value)}
+            value={selectedCategory}
+            onChange={(e) => {
+              setSelectedCategory(e.target.value);
+              setFolder(e.target.value);  // Aquí conectas la categoría seleccionada con la carpeta
+            }}
             className="mb-4 border border-gray-300 rounded px-3 py-2"
           >
             <option value="header">Banner principal</option>
-            <option value="about">Contacto</option>
+            <option value="about">Sobre Nosotros</option>
             <option value="bocadillos">Bocadillos</option>
             <option value="sandwiches">Sandwiches</option>
             <option value="especiales">Especiales</option>
