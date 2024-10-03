@@ -1,7 +1,13 @@
 import { useState, useEffect } from "react";
 import { storage, db } from "../services/firebase";
-import { ref, uploadBytes, getDownloadURL, deleteObject, listAll } from "firebase/storage";
-import { addDoc, collection } from "firebase/firestore";
+import {
+  ref,
+  uploadBytes,
+  getDownloadURL,
+  deleteObject,
+  listAll,
+} from "firebase/storage";
+import { addDoc, collection, getDocs } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
 import AdminNavbar from "./AdminNavbar";
 
@@ -13,10 +19,16 @@ const ImageUpload = () => {
   const [newImages, setNewImages] = useState({}); // Nuevas imágenes para reemplazo
   const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
+  const [products, setProducts] = useState([]); // Productos en Firestore
+  const [productName, setProductName] = useState("");
+  const [productDescription, setProductDescription] = useState("");
+  const [productPrice, setProductPrice] = useState("");
+  const [productCategory, setProductCategory] = useState("bocadillos"); // Categoría por defecto
   const navigate = useNavigate();
 
   useEffect(() => {
     if (folder) fetchImages(); // Cargar imágenes cada vez que cambie la carpeta seleccionada
+    fetchProducts(); // Cargar productos de Firestore
   }, [folder]);
 
   // Función para cargar las imágenes de la carpeta seleccionada
@@ -34,6 +46,22 @@ const ImageUpload = () => {
     } catch (error) {
       console.error(`Error al cargar las imágenes de la carpeta ${folder}:`, error);
       setErrorMessage(`Error al cargar las imágenes de la carpeta ${folder}.`);
+    }
+  };
+
+  // Función para cargar productos desde Firestore
+  const fetchProducts = async () => {
+    try {
+      const productsCollection = collection(db, "products");
+      const productSnapshot = await getDocs(productsCollection);
+      const productList = productSnapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+      setProducts(productList);
+    } catch (error) {
+      console.error("Error al cargar los productos:", error);
+      setErrorMessage("Error al cargar los productos.");
     }
   };
 
@@ -129,6 +157,35 @@ const ImageUpload = () => {
     }
   };
 
+  const handleAddProduct = async () => {
+    if (productName && productDescription && productPrice) {
+      try {
+        await addDoc(collection(db, "products"), {
+          name: productName,
+          description: productDescription,
+          price: parseFloat(productPrice),
+          category: productCategory,
+          timestamp: Date.now(),
+        });
+
+        setSuccessMessage("Producto agregado exitosamente.");
+        setErrorMessage("");
+        fetchProducts(); // Recargar productos para actualizar la lista
+
+        // Limpiar campos después de agregar el producto
+        setProductName("");
+        setProductDescription("");
+        setProductPrice("");
+      } catch (error) {
+        setErrorMessage("Error al agregar el producto. Por favor, intenta nuevamente.");
+        setSuccessMessage("");
+        console.error("Error:", error);
+      }
+    } else {
+      setErrorMessage("Por favor, completa todos los campos.");
+    }
+  };
+
   const goToHome = () => {
     navigate("/"); // Navega a la página de inicio
   };
@@ -153,14 +210,11 @@ const ImageUpload = () => {
             onChange={(e) => setFolder(e.target.value)}
             className="mb-4 border border-gray-300 rounded px-3 py-2"
           >
-            <option value="header">Header</option>
-            <option value="contact">Contacto</option>
-            <option value="footer">Footer</option>
+            <option value="header">Banner principal</option>
+            <option value="about">Sobre nosotros</option>
             <option value="bocadillos">Bocadillos</option>
             <option value="sandwiches">Sandwiches y Tostadas</option>
             <option value="especiales">Especiales</option>
-            <option value="about">Sobre nosotros</option>
-            <option value="menu">Menu</option>
           </select>
 
           {/* Campo de entrada para archivos */}
@@ -186,40 +240,100 @@ const ImageUpload = () => {
           </button>
         </div>
 
-        {/* Sección de imágenes de la categoría seleccionada */}
-        <div className="bg-gray-100 rounded-lg p-6 w-full max-w-4xl">
-          <h2 className="text-2xl mb-4">Imágenes de {folder}</h2>
-          {images.length > 0 ? (
-            <div className="grid grid-cols-2 gap-4 mb-8">
-              {images.map((image) => (
-                <div key={image.name} className="flex flex-col items-center border border-gray-300 rounded py-4 px-20">
-                  <img src={image.url} alt={image.name} className="mb-2 w-40 h-40 object-cover rounded" />
+        {/* Sección para ver imágenes */}
+        <div className="bg-white shadow-md rounded-lg p-6 mb-8 w-full max-w-md">
+          <h2 className="mb-5 text-2xl">Imágenes en {folder}</h2>
+          {images.length === 0 ? (
+            <p>No hay imágenes en esta carpeta.</p>
+          ) : (
+            images.map((image) => (
+              <div key={image.name} className="mb-4">
+                <img src={image.url} alt={image.name} className="max-w-xs rounded" />
+                <div className="flex justify-between">
+                  <span>{image.name}</span>
                   <input
                     type="file"
                     onChange={(e) => handleFileChangeMenu(e, image.name)}
-                    className="mb-2 border border-gray-300 rounded px-3 py-2"
+                    className="border border-gray-300 rounded px-2"
                   />
                   <button
                     onClick={() => handleReplaceImage(image.name)}
-                    className="bg-blue-500 text-white py-1 px-3 rounded"
-                    disabled={!newImages[image.name]} // Deshabilitar si no hay nueva imagen seleccionada
+                    className="bg-blue-500 text-white py-1 px-2 rounded"
                   >
-                    Reemplazar Imagen
+                    Reemplazar
                   </button>
                 </div>
-              ))}
-            </div>
-          ) : (
-            <p>No hay imágenes en la carpeta {folder} actualmente.</p>
+              </div>
+            ))
           )}
         </div>
 
-        <button
-          onClick={goToHome}
-          className="mt-4 bg-blue-500 text-white py-2 px-4 rounded"
-        >
-          Ir a la página principal
-        </button>
+        {/* Sección para agregar productos */}
+        <div className="bg-white shadow-md rounded-lg p-6 mb-8 w-full max-w-md">
+          <h2 className="mb-5 text-2xl">Agregar Producto</h2>
+
+          <label htmlFor="productName" className="mb-2">
+            Nombre del producto:
+          </label>
+          <input
+            type="text"
+            id="productName"
+            value={productName}
+            onChange={(e) => setProductName(e.target.value)}
+            className="mb-4 border border-gray-300 rounded px-3 py-2 w-full"
+            placeholder="Nombre del producto"
+          />
+
+          <label htmlFor="productDescription" className="mb-2">
+            Descripción del producto:
+          </label>
+          <textarea
+            id="productDescription"
+            value={productDescription}
+            onChange={(e) => setProductDescription(e.target.value)}
+            className="mb-4 border border-gray-300 rounded px-3 py-2 w-full"
+            placeholder="Descripción del producto"
+          />
+
+          <label htmlFor="productPrice" className="mb-2">
+            Precio del producto:
+          </label>
+          <input
+            type="number"
+            id="productPrice"
+            value={productPrice}
+            onChange={(e) => setProductPrice(e.target.value)}
+            className="mb-4 border border-gray-300 rounded px-3 py-2 w-full"
+            placeholder="Precio del producto"
+          />
+
+          <label htmlFor="productCategory" className="mb-2">
+            Categoría:
+          </label>
+          <select
+            id="productCategory"
+            value={productCategory}
+            onChange={(e) => setProductCategory(e.target.value)}
+            className="mb-4 border border-gray-300 rounded px-3 py-2 w-full"
+          >
+            <option value="bocadillos">Bocadillos</option>
+            <option value="sandwiches">Sandwiches</option>
+            <option value="especiales">Especiales</option>
+          </select>
+
+          <button
+            onClick={handleAddProduct}
+            className="bg-blue-500 text-white py-2 px-4 rounded"
+          >
+            Agregar Producto
+          </button>
+          {successMessage && (
+            <p className="text-green-500 mb-4">{successMessage}</p>
+          )}
+          {errorMessage && (
+            <p className="text-red-500 mb-4">{errorMessage}</p>
+          )}
+        </div>
       </div>
     </>
   );
