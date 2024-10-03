@@ -7,7 +7,7 @@ import {
   deleteObject,
   listAll,
 } from "firebase/storage";
-import { addDoc, collection, getDocs } from "firebase/firestore";
+import { addDoc, collection, getDocs, deleteDoc, doc } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
 import AdminNavbar from "./AdminNavbar";
 
@@ -20,16 +20,22 @@ const ImageUpload = () => {
   const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [products, setProducts] = useState([]); // Productos en Firestore
+  const [selectedCategory, setSelectedCategory] = useState("bocadillos");
   const [productName, setProductName] = useState("");
   const [productDescription, setProductDescription] = useState("");
   const [productPrice, setProductPrice] = useState("");
   const [productCategory, setProductCategory] = useState("bocadillos"); // Categoría por defecto
+  const [filterCategory, setFilterCategory] = useState("bocadillos"); // Estado para el select de listar productos
   const navigate = useNavigate();
 
   useEffect(() => {
     if (folder) fetchImages(); // Cargar imágenes cada vez que cambie la carpeta seleccionada
     fetchProducts(); // Cargar productos de Firestore
   }, [folder]);
+
+  useEffect(() => {
+    fetchProducts();
+  }, [filterCategory]);
 
   // Función para cargar las imágenes de la carpeta seleccionada
   const fetchImages = async () => {
@@ -49,19 +55,27 @@ const ImageUpload = () => {
     }
   };
 
-  // Función para cargar productos desde Firestore
+  // Cargar productos desde Firestore filtrados por categoría
   const fetchProducts = async () => {
     try {
       const productsCollection = collection(db, "products");
       const productSnapshot = await getDocs(productsCollection);
-      const productList = productSnapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      }));
+      const productList = productSnapshot.docs
+        .map((doc) => ({ id: doc.id, ...doc.data() }))
+        .filter((product) => product.category === filterCategory);
       setProducts(productList);
     } catch (error) {
-      console.error("Error al cargar los productos:", error);
-      setErrorMessage("Error al cargar los productos.");
+      setErrorMessage("Error al cargar los productos.", error.errorMessage);
+    }
+  };
+
+  const handleDeleteProduct = async (productId) => {
+    try {
+      await deleteDoc(doc(db, "products", productId));
+      setSuccessMessage("Producto eliminado exitosamente.");
+      fetchProducts(); // Recargar productos
+    } catch (error) {
+      setErrorMessage("Error al eliminar el producto.", error.errorMessage);
     }
   };
 
@@ -190,6 +204,10 @@ const ImageUpload = () => {
     navigate("/"); // Navega a la página de inicio
   };
 
+  const filteredProducts = products.filter(
+    (product) => product.category === filterCategory
+  );
+
   return (
     <>
       <AdminNavbar />
@@ -211,104 +229,99 @@ const ImageUpload = () => {
             className="mb-4 border border-gray-300 rounded px-3 py-2"
           >
             <option value="header">Banner principal</option>
-            <option value="about">Sobre nosotros</option>
+            <option value="about">Contacto</option>
             <option value="bocadillos">Bocadillos</option>
-            <option value="sandwiches">Sandwiches y Tostadas</option>
+            <option value="sandwiches">Sandwiches</option>
             <option value="especiales">Especiales</option>
           </select>
 
-          {/* Campo de entrada para archivos */}
           <input
             type="file"
             onChange={handleFileChange}
-            className="mb-4 border border-gray-300 rounded px-3 py-2"
+            className="mb-4"
+            accept="image/*"
           />
+
           {previewUrl && (
-            <img src={previewUrl} alt="Vista previa" className="mb-4 max-w-xs rounded" />
+            <img
+              src={previewUrl}
+              alt="Vista previa"
+              className="mb-4 w-full h-auto max-h-40 object-contain"
+            />
           )}
-          {successMessage && (
-            <p className="text-green-500 mb-4">{successMessage}</p>
-          )}
-          {errorMessage && (
-            <p className="text-red-500 mb-4">{errorMessage}</p>
-          )}
+
           <button
             onClick={handleImageUpload}
-            className="bg-blue-500 text-white py-2 px-4 rounded mb-4"
+            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
           >
             Subir Imagen
           </button>
-        </div>
 
-        {/* Sección para ver imágenes */}
-        <div className="bg-white shadow-md rounded-lg p-6 mb-8 w-full max-w-md">
-          <h2 className="mb-5 text-2xl">Imágenes en {folder}</h2>
-          {images.length === 0 ? (
-            <p>No hay imágenes en esta carpeta.</p>
-          ) : (
-            images.map((image) => (
-              <div key={image.name} className="mb-4">
-                <img src={image.url} alt={image.name} className="max-w-xs rounded" />
-                <div className="flex justify-between">
-                  <span>{image.name}</span>
-                  <input
-                    type="file"
-                    onChange={(e) => handleFileChangeMenu(e, image.name)}
-                    className="border border-gray-300 rounded px-2"
-                  />
-                  <button
-                    onClick={() => handleReplaceImage(image.name)}
-                    className="bg-blue-500 text-white py-1 px-2 rounded"
-                  >
-                    Reemplazar
-                  </button>
-                </div>
-              </div>
-            ))
+          {successMessage && (
+            <p className="text-green-500 mt-4">{successMessage}</p>
           )}
+          {errorMessage && <p className="text-red-500 mt-4">{errorMessage}</p>}
         </div>
 
-        {/* Sección para agregar productos */}
+        {/* Sección de reemplazo de imágenes */}
+        <div className="bg-white shadow-md rounded-lg p-6 mb-8 w-full max-w-md">
+          <h2 className="mb-5 text-2xl">Reemplazar Imagenes en {folder}</h2>
+
+          <ul>
+            {images.map((image) => (
+              <li key={image.name} className="mb-4">
+                <img
+                  src={image.url}
+                  alt={image.name}
+                  className="mb-2 w-full h-auto max-h-40 object-contain"
+                />
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => handleFileChangeMenu(e, image.name)}
+                  className="mb-2"
+                />
+                <button
+                  onClick={() => handleReplaceImage(image.name)}
+                  className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
+                >
+                  Reemplazar
+                </button>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        {/* Sección de agregar producto */}
         <div className="bg-white shadow-md rounded-lg p-6 mb-8 w-full max-w-md">
           <h2 className="mb-5 text-2xl">Agregar Producto</h2>
 
-          <label htmlFor="productName" className="mb-2">
-            Nombre del producto:
-          </label>
           <input
             type="text"
-            id="productName"
+            placeholder="Nombre del Producto"
             value={productName}
             onChange={(e) => setProductName(e.target.value)}
             className="mb-4 border border-gray-300 rounded px-3 py-2 w-full"
-            placeholder="Nombre del producto"
           />
 
-          <label htmlFor="productDescription" className="mb-2">
-            Descripción del producto:
-          </label>
-          <textarea
-            id="productDescription"
+          <input
+            type="text"
+            placeholder="Descripción del Producto"
             value={productDescription}
             onChange={(e) => setProductDescription(e.target.value)}
             className="mb-4 border border-gray-300 rounded px-3 py-2 w-full"
-            placeholder="Descripción del producto"
           />
 
-          <label htmlFor="productPrice" className="mb-2">
-            Precio del producto:
-          </label>
           <input
             type="number"
-            id="productPrice"
+            placeholder="Precio del Producto"
             value={productPrice}
             onChange={(e) => setProductPrice(e.target.value)}
             className="mb-4 border border-gray-300 rounded px-3 py-2 w-full"
-            placeholder="Precio del producto"
           />
 
           <label htmlFor="productCategory" className="mb-2">
-            Categoría:
+            Selecciona la categoría:
           </label>
           <select
             id="productCategory"
@@ -323,17 +336,58 @@ const ImageUpload = () => {
 
           <button
             onClick={handleAddProduct}
-            className="bg-blue-500 text-white py-2 px-4 rounded"
+            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
           >
             Agregar Producto
           </button>
+
           {successMessage && (
-            <p className="text-green-500 mb-4">{successMessage}</p>
+            <p className="text-green-500 mt-4">{successMessage}</p>
           )}
-          {errorMessage && (
-            <p className="text-red-500 mb-4">{errorMessage}</p>
-          )}
+          {errorMessage && <p className="text-red-500 mt-4">{errorMessage}</p>}
         </div>
+
+        {/* Sección de lista de productos */}
+        <div className="bg-white shadow-md rounded-lg p-6 mb-8 w-full max-w-md">
+          <h2 className="mb-5 text-2xl">Lista de Productos</h2>
+
+          <label htmlFor="filterCategory" className="mb-2">
+            Filtrar por categoría:
+          </label>
+          <select
+            id="filterCategory"
+            value={filterCategory}
+            onChange={(e) => setFilterCategory(e.target.value)}
+            className="mb-4 border border-gray-300 rounded px-3 py-2 w-full"
+          >
+            <option value="bocadillos">Bocadillos</option>
+            <option value="sandwiches">Sandwiches</option>
+            <option value="especiales">Especiales</option>
+          </select>
+
+          <ul>
+            {filteredProducts.map((product) => (
+              <li key={product.id} className="mb-4">
+                <p className="font-bold">{product.name}</p>
+                <p>{product.description}</p>
+                <p className="text-green-600 font-semibold">${product.price}</p>
+                <button
+                  onClick={() => handleDeleteProduct(product.id)}
+                  className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
+                >
+                  Eliminar Producto
+                </button>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <button
+          onClick={goToHome}
+          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+        >
+          Volver al Inicio
+        </button>
       </div>
     </>
   );
