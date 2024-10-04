@@ -31,7 +31,7 @@ const Header = () => {
       }}
     >
       <div className="absolute inset-0 bg-black opacity-50"></div>
-      <header className="relative text-white z-10">
+      <header className="relative text-white z-9">
         <h1 className="text-5xl md:text-7xl lg:text-9xl font-DancingScript">Bienvenido</h1>
         <p className="text-lg mt-4 font-roboto">Tasca la Fundicion</p>
       </header>

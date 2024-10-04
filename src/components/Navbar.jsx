@@ -36,7 +36,6 @@ const Navbar = () => {
           {isOpen ? 'Cerrar' : 'Menú'}
         </button>
         <ul className={`flex space-x-4 z-10 ${isOpen ? 'flex-col absolute top-full left-0 bg-black w-full ' : 'hidden md:flex'}`}>
-          <li><a href="#header" className="hover:text-gray-300 text-white pl-4">Inicio</a></li>
           <li><a href="#about" className="hover:text-gray-300 text-white">Sobre Nosotros</a></li>
           <li><a href="#menu" className="hover:text-gray-300 text-white">Menú</a></li>
           <li><a href="#contact" className="hover:text-gray-300 text-white">Contacto</a></li>

@@ -28,7 +28,7 @@ export default function ContactSection() {
   };
 
   return (
-    <div className="bg-gray-100 py-12 px-4 sm:px-6 lg:px-8">
+    <div className="bg-gray-100 py-12 px-4 sm:px-6 lg:px-8" id='contact'>
       <div className="max-w-7xl mx-auto">
         <h2 className="text-3xl font-extrabold text-gray-900 text-center mb-8">Contactanos</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">

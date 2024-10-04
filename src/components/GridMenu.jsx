@@ -53,7 +53,7 @@ const GridMenu = () => {
   const openModal = () => {
     const menuContent = (
       <div>
-        <h2 className="text-2xl font-bold mb-4">{`Menú de ${activeTab.charAt(0).toUpperCase() + activeTab.slice(1)}`}</h2>
+        <h2 className="text-2xl font-bold mb-4" >{`Menú de ${activeTab.charAt(0).toUpperCase() + activeTab.slice(1)}`}</h2>
         <ul>
           {products.map(product => (
             <li key={product.id} className="mb-6">
@@ -83,7 +83,7 @@ const GridMenu = () => {
   };
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="container mx-auto px-4 py-8" id='menu'>
       <h2 className="text-3xl font-bold tracking-tighter text-center mb-4">Conoce nuestro menú</h2>
 
       <Tabs defaultValue={activeTab} onValueChange={setActiveTab}>
