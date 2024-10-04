@@ -1,8 +1,8 @@
 export default function Contact() {
   return (
-    <section className="bg-gray-100 py-12">
+    <section className="bg-gray-100 py-12" id="contact">
       <div className="container mx-auto px-4">
-        <h2 className="text-3xl font-bold text-center mb-8">Veni a conocernos</h2>
+        <h2 className="text-3xl font-bold text-center mb-8">Veni a visitarnos</h2>
         <div className="flex flex-col md:flex-row items-start space-y-6 md:space-y-0 md:space-x-8" style={{ height: '300px' }}>
           <div className="w-full md:w-1/2 h-full">
             <iframe
@@ -13,6 +13,7 @@ export default function Contact() {
               allowFullScreen
               loading="lazy"
               title="Ubicacion de Restaurante"
+              className="rounded"
             ></iframe>
           </div>
           <div className="w-full md:w-1/2 bg-white p-6 rounded-lg shadow-md h-full">
