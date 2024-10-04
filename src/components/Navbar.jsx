@@ -28,7 +28,7 @@ const Navbar = () => {
   return (
     <nav className="fixed top-0 left-0 w-full text-white py-4 shadow-md z-10 bg-black">
       <div className="container mx-auto flex justify-between items-center px-4">
-        <div className="text-2xl font-bold"><a href="#header">Tosca La Fundicion</a></div>
+        <div className="text-2xl font-bold "><a href="#header" className='text-white'>Tosca La Fundicion</a></div>
         <button 
           onClick={toggleMenu} 
           className="md:hidden focus:outline-none bg-white text-black"
