@@ -3,7 +3,7 @@ import { auth } from '../services/firebase';
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false); // Estado para controlar el menú desplegable
-  const [setIsAuthenticated] = useState(false); // Cambié esto para que funcione correctamente
+  const [isAuthenticated, setIsAuthenticated] = useState(false); // Estado de autenticación del usuario
   const [navbarBackground, setNavbarBackground] = useState('transparent'); // Estado para el background del navbar
 
   // Efecto para verificar si el usuario está autenticado
@@ -16,7 +16,6 @@ const Navbar = () => {
       }
     });
 
-    // Limpia el listener cuando el componente se desmonte
     return () => unsubscribe();
   }, []);
 
@@ -32,7 +31,6 @@ const Navbar = () => {
 
     window.addEventListener('scroll', handleScroll);
 
-    // Limpia el listener cuando el componente se desmonte
     return () => {
       window.removeEventListener('scroll', handleScroll);
     };
@@ -48,36 +46,73 @@ const Navbar = () => {
     >
       <div className="container mx-auto flex justify-between items-center px-4">
         <div className="text-2xl font-bold">
-          <a href="#header" className="relative text-white py-2 hover:text-gray-300 transition duration-300 transform scale-100 hover:scale-110 before:absolute before:content-[''] before:w-0 before:h-[2px] before:bg-white before:bottom-0 before:left-1/2 before:transition-all before:duration-300 before:ease-in-out hover:before:w-full hover:before:left-0">
+          <a
+            href="#header"
+            className="relative text-white py-2 hover:text-gray-300 transition duration-300 transform scale-100 hover:scale-110 before:absolute before:content-[''] before:w-0 before:h-[2px] before:bg-white before:bottom-0 before:left-1/2 before:transition-all before:duration-300 before:ease-in-out hover:before:w-full hover:before:left-0"
+          >
             Tosca La Fundicion
           </a>
         </div>
-        <button 
-          onClick={toggleMenu} 
-          className="md:hidden focus:outline-none bg-white text-black"
+
+        {/* Botón de Menú para vista móvil */}
+        <button
+          onClick={toggleMenu}
+          className="md:hidden focus:outline-none bg-white text-black py-2 px-3 rounded transition duration-300 hover:bg-gray-200"
         >
           {isOpen ? 'Cerrar' : 'Menú'}
         </button>
-        <ul className={`flex space-x-4 z-10 ${isOpen ? 'flex-col absolute top-full left-0 bg-black w-full ' : 'hidden md:flex'}`}>
-          <li><a href="#about" className="relative text-white py-2 hover:text-gray-300 transition duration-300 before:absolute before:content-[''] before:w-0 before:h-[2px] before:bg-white before:bottom-0 before:left-1/2 before:transition-all before:duration-300 before:ease-in-out hover:before:w-full hover:before:left-0">Sobre Nosotros</a></li>
-          <li><a href="#menu" className="relative text-white py-2 hover:text-gray-300 transition duration-300 before:absolute before:content-[''] before:w-0 before:h-[2px] before:bg-white before:bottom-0 before:left-1/2 before:transition-all before:duration-300 before:ease-in-out hover:before:w-full hover:before:left-0">Menú</a></li>
-          <li><a href="#contact" className="relative text-white py-2 hover:text-gray-300 transition duration-300 before:absolute before:content-[''] before:w-0 before:h-[2px] before:bg-white before:bottom-0 before:left-1/2 before:transition-all before:duration-300 before:ease-in-out hover:before:w-full hover:before:left-0">Ubicación</a></li>
 
-          
-          {/* Aquí se renderiza condicionalmente el Link según el estado de autenticación
+        {/* Menú */}
+        <ul
+          className={`flex flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-4 absolute md:relative top-full left-0 w-full md:w-auto transition-all duration-300 transform md:transform-none ${
+            isOpen ? 'opacity-100 bg-black' : 'opacity-0 pointer-events-none'
+          } md:opacity-100 md:pointer-events-auto md:bg-transparent`}
+        >
+          <li className="py-2 px-4">
+            <a
+              href="#about"
+              className="relative text-white hover:text-gray-300 transition duration-300 before:absolute before:content-[''] before:w-0 before:h-[2px] before:bg-white before:bottom-0 before:left-1/2 before:transition-all before:duration-300 before:ease-in-out hover:before:w-full hover:before:left-0"
+            >
+              Sobre Nosotros
+            </a>
+          </li>
+          <li className="py-2 px-4">
+            <a
+              href="#menu"
+              className="relative text-white hover:text-gray-300 transition duration-300 before:absolute before:content-[''] before:w-0 before:h-[2px] before:bg-white before:bottom-0 before:left-1/2 before:transition-all before:duration-300 before:ease-in-out hover:before:w-full hover:before:left-0"
+            >
+              Menú
+            </a>
+          </li>
+          <li className="py-2 px-4">
+            <a
+              href="#contact"
+              className="relative text-white hover:text-gray-300 transition duration-300 before:absolute before:content-[''] before:w-0 before:h-[2px] before:bg-white before:bottom-0 before:left-1/2 before:transition-all before:duration-300 before:ease-in-out hover:before:w-full hover:before:left-0"
+            >
+              Ubicación
+            </a>
+          </li>
+
+          {/* Renderiza condicionalmente el enlace de Panel de Administración o Ingresar */}
           {isAuthenticated ? (
-            <li>
-              <a href="/upload-images" className="hover:text-gray-300 text-white">
-                Panel de Administración
+            <li className="py-2 px-4">
+              <a
+                href="/upload-images"
+                className="relative text-white hover:text-gray-300 transition duration-300"
+              >
+                
               </a>
             </li>
           ) : (
-            <li>
-              <a href="/login" className="hover:text-gray-300 text-white">
-                Ingresar
+            <li className="py-2 px-4">
+              <a
+                href="/login"
+                className="relative text-white hover:text-gray-300 transition duration-300"
+              >
+                
               </a>
             </li>
-          )} */}
+          )}
         </ul>
       </div>
     </nav>
