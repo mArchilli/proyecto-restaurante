@@ -8,7 +8,7 @@ export default function Contact() {
             <iframe
               src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3081.5091599336915!2d-0.39175340000000003!3d39.435222499999995!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0xd604edd225db98f%3A0x6316b22c4050cf1d!2sTasca%20La%20Fundicion!5e0!3m2!1ses-419!2sar!4v1727796211063!5m2!1ses-419!2sar"
               width="100%"
-              height="100%"
+              height="290px"
               style={{ border: 0 }}
               allowFullScreen
               loading="lazy"
