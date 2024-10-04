@@ -23,6 +23,7 @@ const Header = () => {
 
   return (
     <section
+      id='header'
       className="relative w-full bg-bottom bg-cover flex flex-col justify-center items-center h-[1000px] mt-[64px] py-40"
       style={{
         backgroundImage: `url(${backgroundImageUrl})`,
