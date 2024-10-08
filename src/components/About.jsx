@@ -29,10 +29,10 @@ const About = () => {
           )}
           <div className="flex flex-col justify-center space-y-4 text-center lg:text-left">
             <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl">Conoce Tosca La Fundicion</h2>
-            <p className="max-w-[600px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed mx-auto lg:ml-auto lg:mr-0">
+            <p className="max-w-[600px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
               Fundada en 2010, Gourmet Haven lleva más de una década sirviendo cocina exquisita a los entusiastas de la comida. Nuestra pasión por la excelencia culinaria y el compromiso de utilizar los mejores ingredientes locales nos distinguen.
             </p>
-            <p className="max-w-[600px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed mx-auto lg:ml-auto lg:mr-0">
+            <p className="max-w-[600px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
               Dirigido por la galardonada chef María Rodríguez, nuestro equipo de cocina elabora cada plato con precisión y creatividad, garantizando una experiencia gastronómica inolvidable para cada huésped.
             </p>
           </div>

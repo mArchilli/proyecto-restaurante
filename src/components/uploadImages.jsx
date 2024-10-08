@@ -14,13 +14,13 @@ import AdminNavbar from "./AdminNavbar";
 const ImageUpload = () => {
   const [image, setImage] = useState(null);
   const [previewUrl, setPreviewUrl] = useState(null);
-  const [folder, setFolder] = useState("bocadillos"); // "bocadillos" como carpeta por defecto
+  const [folder, setFolder] = useState("header"); // "header" como carpeta por defecto - Banner principal
   const [images, setImages] = useState([]); // Imágenes actuales en la carpeta seleccionada
   const [newImages, setNewImages] = useState({}); // Nuevas imágenes para reemplazo
   const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [products, setProducts] = useState([]); // Productos en Firestore
-  const [selectedCategory, setSelectedCategory] = useState("bocadillos");
+  const [selectedCategory, setSelectedCategory] = useState("header");
   const [productName, setProductName] = useState("");
   const [productDescription, setProductDescription] = useState("");
   const [productPrice, setProductPrice] = useState("");
@@ -211,147 +211,161 @@ const ImageUpload = () => {
   return (
     <>
       <AdminNavbar />
-      <div className="flex flex-col items-center mt-24">
+      <div className="flex flex-col items-center mt-24 mb-24">
         <h1 className="mb-5">Panel de Administración</h1>
 
-        {/* Sección de carga de imágenes */}
-        <div className="bg-white shadow-md rounded-lg p-6 mb-8 w-full max-w-md">
-          <h2 className="mb-5 text-2xl">Subir Imagen</h2>
+        <div className="flex justify-between w-full max-w-5xl mx-auto">
+      {/* Sección de carga de imágenes */}
+      <div className="bg-white shadow-md rounded-lg p-6 mb-8 w-1/2 max-w-md">
+        <h2 className="mb-5 text-2xl">Subir Imagen</h2>
 
-          {/* Selector para elegir la carpeta/sección */}
-          <label htmlFor="folderSelect" className="mb-2">
-            Selecciona la categoría:
-          </label>
-          <select
-            id="folderSelect"
-            value={selectedCategory}
-            onChange={(e) => {
-              setSelectedCategory(e.target.value);
-              setFolder(e.target.value);  // Aquí conectas la categoría seleccionada con la carpeta
-            }}
-            className="mb-4 border border-gray-300 rounded px-3 py-2"
-          >
-            <option value="header">Banner principal</option>
-            <option value="about">Sobre Nosotros</option>
-            <option value="bocadillos">Bocadillos</option>
-            <option value="sandwiches">Sandwiches</option>
-            <option value="especiales">Especiales</option>
-          </select>
+        {/* Selector para elegir la carpeta/sección */}
+        <label htmlFor="folderSelect" className="mb-2">
+          Selecciona la categoría:
+        </label>
+        <select
+          id="folderSelect"
+          value={selectedCategory}
+          onChange={(e) => {
+            setSelectedCategory(e.target.value);
+            setFolder(e.target.value); // Aquí conectas la categoría seleccionada con la carpeta
+          }}
+          className="mb-4 border border-gray-300 rounded px-3 py-2"
+        >
+          <option value="header">Banner principal</option>
+          <option value="about">Sobre Nosotros</option>
+          <option value="bocadillos">Bocadillos</option>
+          <option value="sandwiches">Sandwiches</option>
+          <option value="especiales">Especiales</option>
+        </select>
 
-          <input
-            type="file"
-            onChange={handleFileChange}
-            className="mb-4"
-            accept="image/*"
+        {/* <input
+          type="file"
+          onChange={handleFileChange}
+          className="mb-4"
+          accept="image/*"
+        />
+
+        {previewUrl && (
+          <img
+            src={previewUrl}
+            alt="Vista previa"
+            className="mb-4 w-full h-auto max-h-40 object-contain"
           />
+        )}
 
-          {previewUrl && (
-            <img
-              src={previewUrl}
-              alt="Vista previa"
-              className="mb-4 w-full h-auto max-h-40 object-contain"
-            />
-          )}
+        <button
+          onClick={handleImageUpload}
+          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+        >
+          Subir Imagen
+        </button> */}
 
-          <button
-            onClick={handleImageUpload}
-            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-          >
-            Subir Imagen
-          </button>
+        {successMessage && (
+          <p className="text-green-500 mt-4">{successMessage}</p>
+        )}
+        {errorMessage && <p className="text-red-500 mt-4">{errorMessage}</p>}
+      </div>
 
-          {successMessage && (
-            <p className="text-green-500 mt-4">{successMessage}</p>
-          )}
-          {errorMessage && <p className="text-red-500 mt-4">{errorMessage}</p>}
-        </div>
+      {/* Sección de reemplazo de imágenes */}
+<div className="bg-white shadow-md rounded-lg p-6 mb-8 w-1/2 max-w-md">
+  <h2 className="mb-5 text-2xl">Reemplazar Imágenes en {folder}</h2>
 
-        {/* Sección de reemplazo de imágenes */}
-        <div className="bg-white shadow-md rounded-lg p-6 mb-8 w-full max-w-md">
-          <h2 className="mb-5 text-2xl">Reemplazar Imagenes en {folder}</h2>
-
-          <ul>
-            {images.map((image) => (
-              <li key={image.name} className="mb-4">
-                <img
-                  src={image.url}
-                  alt={image.name}
-                  className="mb-2 w-full h-auto max-h-40 object-contain"
-                />
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={(e) => handleFileChangeMenu(e, image.name)}
-                  className="mb-2"
-                />
-                <button
-                  onClick={() => handleReplaceImage(image.name)}
-                  className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
-                >
-                  Reemplazar
-                </button>
-              </li>
-            ))}
-          </ul>
-        </div>
-
-        {/* Sección de agregar producto */}
-        <div className="bg-white shadow-md rounded-lg p-6 mb-8 w-full max-w-md">
-          <h2 className="mb-5 text-2xl">Agregar Producto</h2>
-
-          <input
-            type="text"
-            placeholder="Nombre del Producto"
-            value={productName}
-            onChange={(e) => setProductName(e.target.value)}
-            className="mb-4 border border-gray-300 rounded px-3 py-2 w-full"
+  <ul>
+    {images.map((image) => (
+      <li key={image.name} className="mb-4">
+        <img
+          src={image.url}
+          alt={image.name}
+          className="mb-2 w-full h-auto max-h-40 object-contain"
+        />
+        
+        {/* Estado para la previsualización de la nueva imagen */}
+        {image.previewUrl && (
+          <img
+            src={image.previewUrl}
+            alt="Previsualización"
+            className="mb-2 w-full h-auto max-h-40 object-contain border border-dashed border-gray-400"
           />
+        )}
 
-          <input
-            type="text"
-            placeholder="Descripción del Producto"
-            value={productDescription}
-            onChange={(e) => setProductDescription(e.target.value)}
-            className="mb-4 border border-gray-300 rounded px-3 py-2 w-full"
-          />
+        <input
+          type="file"
+          accept="image/*"
+          onChange={(e) => handleFileChangeMenu(e, image.name)}
+          className="mb-2"
+        />
+        
+        <button
+          onClick={() => handleReplaceImage(image.name)}
+          className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
+        >
+          Reemplazar
+        </button>
+      </li>
+    ))}
+  </ul>
+</div>
+    </div>
 
-          <input
-            type="number"
-            placeholder="Precio del Producto"
-            value={productPrice}
-            onChange={(e) => setProductPrice(e.target.value)}
-            className="mb-4 border border-gray-300 rounded px-3 py-2 w-full"
-          />
+        <div className="flex justify-between w-full max-w-5xl mx-auto">
+      {/* Sección de agregar producto */}
+      <div className="bg-white shadow-md rounded-lg p-6 mb-8 w-1/2 max-w-md">
+        <h2 className="mb-5 text-2xl">Agregar Producto</h2>
 
-          <label htmlFor="productCategory" className="mb-2">
-            Selecciona la categoría:
-          </label>
-          <select
-            id="productCategory"
-            value={productCategory}
-            onChange={(e) => setProductCategory(e.target.value)}
-            className="mb-4 border border-gray-300 rounded px-3 py-2 w-full"
-          >
-            <option value="bocadillos">Bocadillos</option>
-            <option value="sandwiches">Sandwiches</option>
-            <option value="especiales">Especiales</option>
-          </select>
+        <input
+          type="text"
+          placeholder="Nombre del Producto"
+          value={productName}
+          onChange={(e) => setProductName(e.target.value)}
+          className="mb-4 border border-gray-300 rounded px-3 py-2 w-full"
+        />
 
-          <button
-            onClick={handleAddProduct}
-            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-          >
-            Agregar Producto
-          </button>
+        <input
+          type="text"
+          placeholder="Descripción del Producto"
+          value={productDescription}
+          onChange={(e) => setProductDescription(e.target.value)}
+          className="mb-4 border border-gray-300 rounded px-3 py-2 w-full"
+        />
 
-          {successMessage && (
-            <p className="text-green-500 mt-4">{successMessage}</p>
-          )}
-          {errorMessage && <p className="text-red-500 mt-4">{errorMessage}</p>}
-        </div>
+        <input
+          type="number"
+          placeholder="Precio del Producto"
+          value={productPrice}
+          onChange={(e) => setProductPrice(e.target.value)}
+          className="mb-4 border border-gray-300 rounded px-3 py-2 w-full"
+        />
 
-        {/* Sección de lista de productos */}
-        <div className="bg-white shadow-md rounded-lg p-6 mb-8 w-full max-w-md">
+        <label htmlFor="productCategory" className="mb-2">
+          Selecciona la categoría:
+        </label>
+        <select
+          id="productCategory"
+          value={productCategory}
+          onChange={(e) => setProductCategory(e.target.value)}
+          className="mb-4 border border-gray-300 rounded px-3 py-2 w-full"
+        >
+          <option value="bocadillos">Bocadillos</option>
+          <option value="sandwiches">Sandwiches</option>
+          <option value="especiales">Especiales</option>
+        </select>
+
+        <button
+          onClick={handleAddProduct}
+          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+        >
+          Agregar Producto
+        </button>
+
+        {successMessage && (
+          <p className="text-green-500 mt-4">{successMessage}</p>
+        )}
+        {errorMessage && <p className="text-red-500 mt-4">{errorMessage}</p>}
+      </div>
+
+      {/* Sección de lista de productos */}
+        <div className="bg-white shadow-md rounded-lg p-6 mb-8 w-1/2 max-w-md">
           <h2 className="mb-5 text-2xl">Lista de Productos</h2>
 
           <label htmlFor="filterCategory" className="mb-2">
@@ -370,20 +384,40 @@ const ImageUpload = () => {
 
           <ul>
             {filteredProducts.map((product) => (
-              <li key={product.id} className="mb-4">
-                <p className="font-bold">{product.name}</p>
-                <p>{product.description}</p>
-                <p className="text-green-600 font-semibold">${product.price}</p>
+              <li key={product.id} className="mb-4 flex items-center justify-between">
+                {/* Contenedor de información del producto */}
+                <div className="flex-1">
+                  <p className="font-bold text-lg">{product.name}</p>
+                  <p className="text-sm text-gray-600">{product.description}</p>
+                  <p className="text-green-600 font-semibold">${product.price}</p>
+                </div>
+
+                {/* Botón de eliminar con ícono de tacho */}
                 <button
                   onClick={() => handleDeleteProduct(product.id)}
-                  className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
+                  className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded flex items-center"
+                  title="Eliminar" // Tooltip simple
                 >
-                  Eliminar Producto
+                  {/* Ícono de tacho de basura */}
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-5 w-5 mr-2"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M6 8a1 1 0 000 2h8a1 1 0 100-2H6zm2-3a1 1 0 000 2h4a1 1 0 100-2H8z"
+                      clipRule="evenodd"
+                    />
+                    <path d="M4 5a2 2 0 012-2h8a2 2 0 012 2v1H4V5zM5 9v8a2 2 0 002 2h6a2 2 0 002-2V9H5z" />
+                  </svg>
                 </button>
               </li>
             ))}
           </ul>
         </div>
+    </div>
 
         <button
           onClick={goToHome}
