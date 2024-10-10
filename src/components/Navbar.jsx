@@ -55,7 +55,7 @@ const Navbar = () => {
             href="#header"
             className="relative text-white py-2 hover:text-gray-300 transition duration-300 transform scale-100 hover:scale-110 before:absolute before:content-[''] before:w-0 before:h-[2px] before:bg-white before:bottom-0 before:left-1/2 before:transition-all before:duration-300 before:ease-in-out hover:before:w-full hover:before:left-0"
           >
-            Tosca La Fundicion
+            Tasca La Fundicion
           </a>
         </div>
 

@@ -33,8 +33,8 @@ const Header = () => {
     >
       <div className="absolute inset-0 bg-black opacity-50"></div>
       <header className="relative text-white z-9">
-        <h1 className="text-5xl md:text-7xl lg:text-9xl font-DancingScript">Bienvenido</h1>
-        <p className="text-lg mt-4 font-roboto">Tasca la Fundicion</p>
+        <h1 className="text-5xl md:text-7xl lg:text-9xl font-DancingScript">Tasca la Fundicion</h1>
+        {/* <p className="text-1xl md:text-3xl lg:text-5xlmt-4 font-roboto">Tasca la Fundicion</p> */}
       </header>
     </section>
   );
