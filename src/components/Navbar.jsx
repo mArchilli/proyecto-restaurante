@@ -38,6 +38,13 @@ const Navbar = () => {
 
   const toggleMenu = () => {
     setIsOpen(!isOpen); // Alternar el estado del menú
+
+    // Cambiar el color de fondo del navbar al abrir/cerrar el menú
+    if (!isOpen) {
+      setNavbarBackground('bg-black'); // Al abrir el menú, fondo negro
+    } else {
+      setNavbarBackground('bg-transparent'); // Al cerrar el menú, fondo transparente
+    }
   };
 
   return (
@@ -101,20 +108,20 @@ const Navbar = () => {
             </a>
           </li>
 
-          {/* Renderiza condicionalmente el enlace de Panel de Administración o Ingresar
-          {isAuthenticated ? (
-            <li className="py-2 px-4">
-              <a href="/upload-images" className="relative text-white hover:text-gray-300 transition duration-300">
-                Panel de Administración
-              </a>
-            </li>
-          ) : (
-            <li className="py-2 px-4">
-              <a href="/login" className="relative text-white hover:text-gray-300 transition duration-300">
-                Ingresar
-              </a>
-            </li>
-          )} */}
+          {/* Renderiza condicionalmente el enlace de Panel de Administración o Ingresar */}
+          {/* {isAuthenticated ? ( */}
+          {/*   <li className="py-2 px-4"> */}
+          {/*     <a href="/upload-images" className="relative text-white hover:text-gray-300 transition duration-300"> */}
+          {/*       Panel de Administración */}
+          {/*     </a> */}
+          {/*   </li> */}
+          {/* ) : ( */}
+          {/*   <li className="py-2 px-4"> */}
+          {/*     <a href="/login" className="relative text-white hover:text-gray-300 transition duration-300"> */}
+          {/*       Ingresar */}
+          {/*     </a> */}
+          {/*   </li> */}
+          {/* )} */}
         </ul>
       </div>
     </nav>
