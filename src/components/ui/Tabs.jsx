@@ -33,11 +33,9 @@ export function TabsTrigger({ children, value, className = '', ...props }) {
 
   return (
     <button
-      className={`inline-flex items-center justify-center whitespace-nowrap rounded-sm px-3 py-1.5 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 ${
-        isSelected
-          ? 'text-foreground shadow-sm bg-black text-white border-black hover:bg-white hover:text-black hover:border-black'
-          : 'text-foreground shadow-sm bg-white text-black border-black hover:bg-black hover:text-white hover:border-black'
-      } ${className}`}
+      className={`inline-flex items-center justify-center whitespace-nowrap rounded-sm px-3 py-1.5 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50
+        ${isSelected ? 'bg-black text-white' : 'bg-white text-black'}
+        hover:bg-black hover:text-white border border-black transition-colors duration-300 ${className}`}
       onClick={() => onValueChange(value)}
       {...props}
     >

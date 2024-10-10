@@ -89,10 +89,18 @@ const GridMenu = () => {
       <Tabs defaultValue={activeTab} onValueChange={setActiveTab}>
         <TabsList className="grid w-full grid-cols-3 mb-8">
           <TabsTrigger value="bocadillos">Bocadillos</TabsTrigger>
-          <TabsTrigger value="sandwiches">Sandwiches y Tostadas</TabsTrigger>
+          
+          <TabsTrigger value="sandwiches">
+            {/* Texto visible en mobile */}
+            <span className="block md:hidden">Sandwiches</span>
+            {/* Texto visible en desktop */}
+            <span className="hidden md:block">Sandwiches y Tostadas</span>
+          </TabsTrigger>
+          
           <TabsTrigger value="especiales">Especiales</TabsTrigger>
         </TabsList>
       </Tabs>
+
 
       <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
         {images.map((image, index) => (
