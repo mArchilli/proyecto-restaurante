@@ -229,7 +229,7 @@ const ImageUpload = () => {
 
         <div className="flex flex-wrap justify-between w-full max-w-5xl mx-auto">
           {/* Sección de carga de imágenes */}
-          <div className="bg-white shadow-md rounded-lg p-6 mb-8 w-full md:w-1/2 max-w-full md:max-w-md">
+          <div className="bg-white shadow-md rounded-lg p-6 mb-8 w-full ">
             <h2 className="mb-5 text-2xl">Subir Imagen</h2>
 
             {/* Selector para elegir la carpeta/sección */}
@@ -283,44 +283,45 @@ const ImageUpload = () => {
           </div>
 
           {/* Sección de reemplazo de imágenes */}
-          <div className="bg-white shadow-md rounded-lg p-6 mb-8 w-full md:w-1/2 max-w-full md:max-w-md">
-            <h2 className="mb-5 text-2xl">Reemplazar Imágenes en {folder}</h2>
+            <div className="bg-white shadow-md rounded-lg p-6 mb-8 w-full">
+              <h2 className="mb-5 text-2xl">Reemplazar Imágenes en {folder}</h2>
 
-            <ul>
-              {images.map((image) => (
-                <li key={image.name} className="mb-4">
-                  <img
-                    src={image.url}
-                    alt={image.name}
-                    className="mb-2 w-full h-auto max-h-40 object-contain"
-                  />
-
-                  {/* Estado para la previsualización de la nueva imagen */}
-                  {image.previewUrl && (
+              <ul className="flex flex-wrap space-x-12 mx-auto">
+                {images.map((image) => (
+                  <li key={image.name} className="mb-4 w-1/3"> {/* Ajusta el ancho como sea necesario */}
                     <img
-                      src={image.previewUrl}
-                      alt="Previsualización"
-                      className="mb-2 w-full h-auto max-h-40 object-contain border border-dashed border-gray-400"
+                      src={image.url}
+                      alt={image.name}
+                      className="mb-2 w-full h-auto max-h-40 object-contain"
                     />
-                  )}
 
-                  <input
-                    type="file"
-                    accept="image/*"
-                    onChange={(e) => handleFileChangeMenu(e, image.name)}
-                    className="mb-2"
-                  />
+                    {/* Estado para la previsualización de la nueva imagen */}
+                    {image.previewUrl && (
+                      <img
+                        src={image.previewUrl}
+                        alt="Previsualización"
+                        className="mb-2 w-full h-auto max-h-40 object-contain border border-dashed border-gray-400"
+                      />
+                    )}
 
-                  <button
-                    onClick={() => handleReplaceImage(image.name)}
-                    className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
-                  >
-                    Reemplazar
-                  </button>
-                </li>
-              ))}
-            </ul>
-          </div>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) => handleFileChangeMenu(e, image.name)}
+                      className="mb-2"
+                    />
+
+                    <button
+                      onClick={() => handleReplaceImage(image.name)}
+                      className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
+                    >
+                      Reemplazar
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
         </div>
 
         <div className="flex flex-wrap justify-between w-full max-w-5xl mx-auto">
