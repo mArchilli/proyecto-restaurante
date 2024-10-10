@@ -3,7 +3,7 @@ import { auth } from '../services/firebase';
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false); // Estado para controlar el menú desplegable
-  const [isAuthenticated, setIsAuthenticated] = useState(false); // Estado de autenticación del usuario
+  const [setIsAuthenticated] = useState(false); // Estado de autenticación del usuario
   const [navbarBackground, setNavbarBackground] = useState('transparent'); // Estado para el background del navbar
 
   // Efecto para verificar si el usuario está autenticado
@@ -41,9 +41,7 @@ const Navbar = () => {
   };
 
   return (
-    <nav
-      className={`fixed top-0 left-0 w-full py-4 z-10 transition-colors duration-300 ${navbarBackground}`}
-    >
+    <nav className={`fixed top-0 left-0 w-full py-4 z-10 transition-colors duration-300 ${navbarBackground}`}>
       <div className="container mx-auto flex justify-between items-center px-4">
         <div className="text-2xl font-bold">
           <a
@@ -59,7 +57,17 @@ const Navbar = () => {
           onClick={toggleMenu}
           className="md:hidden focus:outline-none bg-white text-black py-2 px-3 rounded transition duration-300 hover:bg-gray-200"
         >
-          {isOpen ? 'Cerrar' : 'Menú'}
+          {isOpen ? (
+            // SVG de icono "Cerrar"
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          ) : (
+            // SVG de icono "Hamburguesa"
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16m-7 6h7" />
+            </svg>
+          )}
         </button>
 
         {/* Menú */}
@@ -93,26 +101,20 @@ const Navbar = () => {
             </a>
           </li>
 
-          {/* Renderiza condicionalmente el enlace de Panel de Administración o Ingresar */}
+          {/* Renderiza condicionalmente el enlace de Panel de Administración o Ingresar
           {isAuthenticated ? (
             <li className="py-2 px-4">
-              <a
-                href="/upload-images"
-                className="relative text-white hover:text-gray-300 transition duration-300"
-              >
-                
+              <a href="/upload-images" className="relative text-white hover:text-gray-300 transition duration-300">
+                Panel de Administración
               </a>
             </li>
           ) : (
             <li className="py-2 px-4">
-              <a
-                href="/login"
-                className="relative text-white hover:text-gray-300 transition duration-300"
-              >
-                
+              <a href="/login" className="relative text-white hover:text-gray-300 transition duration-300">
+                Ingresar
               </a>
             </li>
-          )}
+          )} */}
         </ul>
       </div>
     </nav>
