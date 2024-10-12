@@ -112,7 +112,7 @@ const GridMenu = () => {
             <img
               src={image.src}
               alt={image.alt}
-              className="w-full h-48 object-cover rounded-lg shadow-lg hover:opacity-80 transition-opacity duration-300"
+              className="w-full h-80 object-cover object-center rounded-lg shadow-lg hover:opacity-80 transition-opacity duration-300"
             />
           </div>
         ))}
