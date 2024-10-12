@@ -129,6 +129,7 @@ const GridMenu = () => {
       <Modal
         isOpen={isModalOpen}
         onRequestClose={() => setIsModalOpen(false)}
+        ariaHideApp={false}
         contentLabel="Menú"
         style={{
           overlay: {
