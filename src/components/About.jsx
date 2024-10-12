@@ -28,7 +28,7 @@ const About = () => {
             <img src={imageUrl} alt="Descripción de la imagen" className="w-full h-auto rounded-lg hidden lg:block" />
           )}
           <div className="flex flex-col justify-center space-y-4 text-center lg:text-left ">
-            <h2 className="text-3xl font-bold tracking-tighter sm:text-4xln mx-auto">Conoce Tosca La Fundicion</h2>
+            <h2 className="text-3xl font-bold tracking-tighter sm:text-4xln mx-auto">Conoce Tasca La Fundicion</h2>
             <p className="max-w-[600px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed mx-auto lg:mx-0">
               Fundada en 2010, Gourmet Haven lleva más de una década sirviendo cocina exquisita a los entusiastas de la comida. Nuestra pasión por la excelencia culinaria y el compromiso de utilizar los mejores ingredientes locales nos distinguen.
             </p>
