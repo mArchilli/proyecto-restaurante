@@ -83,28 +83,23 @@ const GridMenu = () => {
   };
 
   return (
-    <div className="container mx-auto px-4 py-8" id='menu'>
+    <section className="container mx-auto px-4 py-8" id='menu'>
       <h2 className="text-3xl font-bold tracking-tighter text-center mb-4">Conoce nuestro menú</h2>
 
       <Tabs defaultValue={activeTab} onValueChange={setActiveTab}>
         <TabsList className="grid w-full grid-cols-3 mb-8">
           <TabsTrigger value="bocadillos">Bocadillos</TabsTrigger>
-          
           <TabsTrigger value="sandwiches">
-            {/* Texto visible en mobile */}
             <span className="block md:hidden">Sandwiches</span>
-            {/* Texto visible en desktop */}
             <span className="hidden md:block">Sandwiches y Tostadas</span>
           </TabsTrigger>
-          
           <TabsTrigger value="especiales">Especiales</TabsTrigger>
         </TabsList>
       </Tabs>
 
-
       <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
         {images.map((image, index) => (
-          <div
+          <figure
             key={image.id}
             className={`relative cursor-pointer ${getImageClasses(index)}`}
             onClick={openModal}
@@ -114,15 +109,15 @@ const GridMenu = () => {
               alt={image.alt}
               className="w-full h-80 object-cover object-center rounded-lg shadow-lg hover:opacity-80 transition-opacity duration-300"
             />
-          </div>
+          </figure>
         ))}
       </div>
 
       <div className="mt-12 text-center">
         <p className="text-sm text-muted-foreground mb-4">
-          V - Vegetarian | GF - Gluten-Free
+          V - Vegetariano | GF - Sin gluten
         </p>
-        <Button variant="outline">Download Full Menu (PDF)</Button>
+        <Button variant="outline">Descargar menú completo (PDF)</Button>
       </div>
 
       {/* Modal */}
@@ -159,7 +154,7 @@ const GridMenu = () => {
         </button>
         <div>{modalContent}</div>
       </Modal>
-    </div>
+    </section>
   );
 };
 
