@@ -58,7 +58,7 @@ const Login = () => {
             onClick={goToHome}
             className="bg-gray-500 text-white py-3 px-4 rounded w-full hover:bg-gray-600 mt-2"
           >
-            Volver al Inicio
+            Volver al Sitio
           </button>
         </form>
       </div>
