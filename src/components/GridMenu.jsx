@@ -59,7 +59,7 @@ const GridMenu = () => {
             <li key={product.id} className="mb-6">
               <div className="flex justify-between items-center">
                 <h3 className="text-xl font-semibold">{product.name}</h3>
-                <span className="text-lg font-medium">${product.price}</span>
+                <span className="text-lg font-medium">€{product.price}</span>
               </div>
               <p className="text-sm text-gray-600">{product.description}</p>
               <hr className="mt-4 border-gray-300" />

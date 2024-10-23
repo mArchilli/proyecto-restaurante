@@ -223,8 +223,9 @@ const ImageUpload = () => {
       <div className="flex flex-col items-center mt-24 mb-24">
         <h1 className="mb-5 text-center">Panel de Administración</h1>
 
+        {/* Sección de carga de imágenes */}
         <div className="flex flex-wrap justify-between w-full max-w-5xl mx-auto">
-          {/* Sección de carga de imágenes */}
+          
           <div className="bg-white shadow-md rounded-lg p-6 mb-8 w-full ">
             <h2 className="mb-5 text-2xl">Subir Imagen</h2>
 
@@ -320,8 +321,9 @@ const ImageUpload = () => {
 
         </div>
 
+        {/* Sección de Sobre Nosotros */}
         <div className="flex flex-wrap justify-between w-full max-w-5xl mx-auto">
-          {/* Sección de Sobre Nosotros */}
+          
           <div className="bg-white shadow-md rounded-lg p-6 mb-8 w-full ">
             <h2 className="mb-5 text-2xl">Seccion Sobre Nosotros</h2>
 
@@ -357,8 +359,9 @@ const ImageUpload = () => {
           </div>
         </div>
 
+        {/* Sección de agregar producto */}
         <div className="flex flex-wrap justify-between w-full max-w-5xl mx-auto">
-          {/* Sección de agregar producto */}
+          
           <div className="bg-white shadow-md rounded-lg p-6 mb-8 w-full md:w-1/2 max-w-full md:max-w-md">
             <h2 className="mb-5 text-2xl">Agregar Producto</h2>
 
@@ -446,7 +449,7 @@ const ImageUpload = () => {
                       {product.description}
                     </p>
                     <p className="text-green-600 font-semibold">
-                      ${product.price}
+                    €{product.price}
                     </p>
                   </div>
 
