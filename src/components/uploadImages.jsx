@@ -27,6 +27,8 @@ const ImageUpload = () => {
   const [errorMessage, setErrorMessage] = useState("");
   const [products, setProducts] = useState([]); // Productos en Firestore
   const [selectedCategory, setSelectedCategory] = useState("header");
+  const [aboutText, setAboutText] = useState();
+  const [submittedContent, setSubmittedContent] = useState(null); // Estado para mostrar el contenido guardado
   const [productName, setProductName] = useState("");
   const [productDescription, setProductDescription] = useState("");
   const [productPrice, setProductPrice] = useState("");
@@ -42,6 +44,11 @@ const ImageUpload = () => {
   useEffect(() => {
     fetchProducts();
   }, [filterCategory]);
+
+  // Llama a la función fetchSubmittedContent cuando se cargue el componente
+  useEffect(() => {
+    fetchSubmittedContent();
+  }, []);
 
   // Función para cargar las imágenes de la carpeta seleccionada
   const fetchImages = async () => {
@@ -128,59 +135,48 @@ const ImageUpload = () => {
     }
   };
 
-  // const handleFileChange = (e) => {
-  //   const selectedFile = e.target.files[0];
-  //   if (selectedFile) {
-  //     setImage(selectedFile);
-  //     setPreviewUrl(URL.createObjectURL(selectedFile));
-  //     setSuccessMessage("");
-  //     setErrorMessage("");
-  //   }
-  // };
+  // Maneja el envío del formulario SobreNosotros
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (aboutText.trim() === '') {
+      alert('Por favor, escribe algo en el textarea.');
+      return;
+    }
+  
+    try {
+      // Obtener todos los documentos de la colección sobreNosotros
+      const querySnapshot = await getDocs(collection(db, 'sobreNosotros'));
+      
+      // Eliminar todos los documentos existentes
+      const deletePromises = querySnapshot.docs.map(doc => {
+        return deleteDoc(doc.ref);  // Eliminar cada documento
+      });
+      
+      // Esperar a que todas las eliminaciones se completen
+      await Promise.all(deletePromises);
+  
+      // Agregar el nuevo contenido a Firebase Firestore
+      const docRef = await addDoc(collection(db, 'sobreNosotros'), {
+        content: aboutText
+      });
+  
+      console.log('Documento escrito con ID: ', docRef.id);
+      setAboutText('');  // Limpia el textarea después de enviar
+      fetchSubmittedContent();  // Actualiza el contenido guardado
+    } catch (e) {
+      console.error('Error al agregar el documento: ', e);
+    }
+  };
+  
 
-  // const handleImageUpload = async () => {
-  //   if (image) {
-  //     try {
-  //       const imageName = await getImageFileName(); // Obtener el nombre del archivo
-  //       const storageRef = ref(storage, `images/${folder}/${imageName}`);
-
-  //       await deleteExistingImage(imageName);
-  //       await uploadBytes(storageRef, image);
-  //       const downloadURL = await getDownloadURL(storageRef);
-
-  //       await addDoc(collection(db, "images"), {
-  //         url: downloadURL,
-  //         folder,
-  //         timestamp: Date.now(),
-  //       });
-
-  //       setSuccessMessage(`Imagen subida exitosamente a la carpeta: ${folder}`);
-  //       setErrorMessage("");
-  //       fetchImages(); // Recargar imágenes para actualizar la lista
-  //     } catch (error) {
-  //       setErrorMessage("Error al subir la imagen. Por favor, intenta nuevamente.");
-  //       setSuccessMessage("");
-  //       console.error("Error:", error);
-  //     }
-  //   }
-  // };
-
-  // Función para generar el nombre de la imagen basado en la carpeta
-  // const getImageFileName = async () => {
-  //   const folderRef = ref(storage, `images/${folder}/`);
-  //   const result = await listAll(folderRef);
-  //   const nextImageNumber = result.items.length + 1; // Siguiente número secuencial
-  //   return `${folder}${nextImageNumber}.jpg`; // Por ejemplo, bocadillo1.jpg
-  // };
-
-  // const deleteExistingImage = async (imageName) => {
-  //   const storageRef = ref(storage, `images/${folder}/${imageName}`);
-  //   try {
-  //     await deleteObject(storageRef);
-  //   } catch (error) {
-  //     console.error(`Error al eliminar la imagen ${imageName}:`, error);
-  //   }
-  // };
+  // Función para obtener el contenido guardado en Firebase
+  const fetchSubmittedContent = async () => {
+    const querySnapshot = await getDocs(collection(db, 'sobreNosotros'));
+    const contents = querySnapshot.docs.map(doc => doc.data());
+    if (contents.length > 0) {
+      setSubmittedContent(contents[0].content);  // Mostrar solo el primer documento por simplicidad
+    }
+  };
 
   const handleAddProduct = async () => {
     if (productName && productDescription && productPrice) {
@@ -322,6 +318,43 @@ const ImageUpload = () => {
               </ul>
             </div>
 
+        </div>
+
+        <div className="flex flex-wrap justify-between w-full max-w-5xl mx-auto">
+          {/* Sección de Sobre Nosotros */}
+          <div className="bg-white shadow-md rounded-lg p-6 mb-8 w-full ">
+            <h2 className="mb-5 text-2xl">Seccion Sobre Nosotros</h2>
+
+             <textarea
+                value={aboutText}
+                onChange={(e) => setAboutText(e.target.value)}
+                className="w-full h-40 p-2 border border-gray-300 rounded"
+                placeholder="Escribe algo sobre nosotros..."
+              />
+
+            <button
+              onClick={handleSubmit}
+              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+            >
+              Guardar
+            </button>
+
+            {submittedContent && (
+              <div className="mt-6">
+                <h2 className="text-xl font-semibold">Contenido actual:</h2>
+                <p className="mt-2 p-4 border border-gray-300 rounded bg-gray-100">
+                  {submittedContent}
+                </p>
+              </div>
+            )}
+
+            {successMessage && (
+              <p className="text-green-500 mt-4">{successMessage}</p>
+            )}
+            {errorMessage && (
+              <p className="text-red-500 mt-4">{errorMessage}</p>
+            )}
+          </div>
         </div>
 
         <div className="flex flex-wrap justify-between w-full max-w-5xl mx-auto">
