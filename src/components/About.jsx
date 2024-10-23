@@ -1,9 +1,11 @@
 import { useEffect, useState } from 'react';
-import { storage } from '../services/firebase';
+import { storage, db } from '../services/firebase'; // Asegúrate de que db esté importado desde tu configuración de Firebase
 import { ref, getDownloadURL } from 'firebase/storage';
+import { collection, getDocs } from 'firebase/firestore'; // Importar funciones necesarias
 
 const About = () => {
   const [imageUrl, setImageUrl] = useState('');
+  const [aboutContent, setAboutContent] = useState(''); // Estado para almacenar el contenido de sobreNosotros
 
   // Función para obtener la URL de la imagen de Firebase
   const fetchImage = async () => {
@@ -16,8 +18,21 @@ const About = () => {
     }
   };
 
+  // Función para obtener el contenido de la colección sobreNosotros
+  const fetchAboutContent = async () => {
+    try {
+      const querySnapshot = await getDocs(collection(db, 'sobreNosotros'));
+      querySnapshot.forEach((doc) => {
+        setAboutContent(doc.data().content); // Asigna el contenido del documento al estado
+      });
+    } catch (error) {
+      console.error('Error al obtener el contenido de sobreNosotros:', error);
+    }
+  };
+
   useEffect(() => {
     fetchImage();
+    fetchAboutContent(); // Llamar a la función para obtener el contenido al cargar el componente
   }, []);
 
   return (
@@ -41,10 +56,7 @@ const About = () => {
               </h2>
             </header>
             <p className="max-w-[600px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed mx-auto lg:mx-0">
-              Fundada en 2010, Gourmet Haven lleva más de una década sirviendo cocina exquisita a los entusiastas de la comida. Nuestra pasión por la excelencia culinaria y el compromiso de utilizar los mejores ingredientes locales nos distinguen.
-            </p>
-            <p className="max-w-[600px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed mx-auto lg:mx-0">
-              Dirigido por la galardonada chef María Rodríguez, nuestro equipo de cocina elabora cada plato con precisión y creatividad, garantizando una experiencia gastronómica inolvidable para cada huésped.
+              {aboutContent} {/* Mostrar el contenido obtenido de Firestore */}
             </p>
           </article>
         </div>
