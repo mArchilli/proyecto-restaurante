@@ -21,6 +21,8 @@ import {
 } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
 import AdminNavbar from "./AdminNavbar";
+import { Button } from './ui/Button';
+
 
 const ImageUpload = () => {
 
@@ -218,9 +220,9 @@ const ImageUpload = () => {
     }
   };
 
-  // const goToHome = () => {
-  //   navigate("/"); // Navega a la página de inicio
-  // };
+ const goToHome = () => {
+   navigate("/"); // Navega a la página de inicio
+ };
 
   const filteredProducts = products.filter(
     (product) => product.category === filterCategory
@@ -268,9 +270,20 @@ const ImageUpload = () => {
           filteredProducts={filteredProducts}
           handleDeleteProduct={handleDeleteProduct}
           allProducts={allProducts}
+          setFilterCategory={setFilterCategory}
         />
         
         <Notification successMessage={successMessage} errorMessage={errorMessage} />
+
+        {/* <button
+          className="mb-5 px-4 py-2 bg-blue-500 text-white rounded"
+          onClick={goToHome}
+        >
+          Volver al sitio
+        </button> */}
+
+        <Button variant="outline"  onClick={goToHome}> Volver al sitio</Button>
+        
       </div>
     </>
   );

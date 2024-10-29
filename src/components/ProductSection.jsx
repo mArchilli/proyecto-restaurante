@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Button } from './ui/Button';
 
 const ProductSection = ({
   productName,
@@ -23,7 +24,7 @@ const ProductSection = ({
   return (
     <div className="flex flex-col md:flex-row gap-4 w-full">
       <div className="bg-white shadow-md rounded-lg p-6 mb-8 w-full md:w-1/2">
-        <h2 className="mb-5 text-2xl">Gestión de Productos</h2>
+        <h2 className="mb-5 text-2xl font-semibold text-gray-800">Gestión de Productos</h2>
 
         <input
           type="text"
@@ -54,13 +55,14 @@ const ProductSection = ({
           <option value="sandwiches">Sandwiches</option>
           <option value="especiales">Especiales</option>
         </select>
-        <button onClick={handleAddProduct} className="bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded">
+        {/* <button onClick={handleAddProduct} className="bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded">
           Agregar Producto
-        </button>
+        </button> */}
+        <Button variant="outline" className='w-full'  onClick={handleAddProduct}> Guardar</Button>
       </div>
 
       <div className="bg-white shadow-md rounded-lg p-6 mb-8 w-full md:w-1/2">
-        <h2 className="mb-5 text-2xl">Lista de Productos</h2>
+        <h2 className="mb-5 text-2xl font-semibold text-gray-800">Lista de Productos</h2>
 
         <label htmlFor="filterCategory" className="mb-2">
           Filtrar por categoría:
