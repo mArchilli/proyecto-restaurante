@@ -282,35 +282,38 @@ const ImageUpload = () => {
           {/* Sección de reemplazo de imágenes */}
             <div className="bg-white shadow-md rounded-lg p-6 mb-8 w-full">
               <h2 className="mb-5 text-2xl">Reemplazar Imágenes en {folder}</h2>
-
-              <ul className="flex flex-wrap space-x-12 mx-auto">
+              <ul className="flex flex-wrap gap-8 justify-center mx-auto mt-8">
                 {images.map((image) => (
-                  <li key={image.name} className="mb-4 w-1/3"> {/* Ajusta el ancho como sea necesario */}
-                    <img
-                      src={image.url}
-                      alt={image.name}
-                      className="mb-2 w-full h-auto max-h-40 object-contain"
-                    />
-
-                    {/* Estado para la previsualización de la nueva imagen */}
-                    {image.previewUrl && (
+                  <li
+                    key={image.name}
+                    className="mb-4 w-full sm:w-1/2 md:w-1/3 lg:w-1/4 bg-white shadow-lg rounded-lg p-4 border border-gray-200 hover:shadow-xl transition-shadow duration-200"
+                  >
+                    <div className="relative mb-4">
                       <img
-                        src={image.previewUrl}
-                        alt="Previsualización"
-                        className="mb-2 w-full h-auto max-h-40 object-contain border border-dashed border-gray-400"
+                        src={image.url}
+                        alt={image.name}
+                        className="w-full h-auto max-h-60 object-contain rounded-md border border-gray-300"
                       />
-                    )}
+                      {/* Previsualización de la nueva imagen */}
+                      {image.previewUrl && (
+                        <img
+                          src={image.previewUrl}
+                          alt="Previsualización"
+                          className="mt-2 w-full h-auto max-h-60 object-contain rounded-md border border-dashed border-gray-400"
+                        />
+                      )}
+                    </div>
 
                     <input
                       type="file"
                       accept="image/*"
                       onChange={(e) => handleFileChangeMenu(e, image.name)}
-                      className="mb-2"
+                      className="mb-4 w-full cursor-pointer text-gray-700 text-sm"
                     />
 
                     <button
                       onClick={() => handleReplaceImage(image.name)}
-                      className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
+                      className="bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded-md w-full text-center transition-colors duration-200 ease-in-out"
                     >
                       Reemplazar
                     </button>
@@ -318,7 +321,6 @@ const ImageUpload = () => {
                 ))}
               </ul>
             </div>
-
         </div>
 
         {/* Sección de Sobre Nosotros */}
