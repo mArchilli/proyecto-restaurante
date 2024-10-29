@@ -1,3 +1,8 @@
+import ImageUploadSection from "./ImageUploadSection";
+import ImageReplaceSection from "./ImageReplaceSection";
+import AboutSection from "./AboutSection";
+import ProductSection from "./ProductSection";
+import Notification from "./Notification";
 import { useState, useEffect } from "react";
 import { storage, db } from "../services/firebase";
 import {
@@ -18,8 +23,7 @@ import { useNavigate } from "react-router-dom";
 import AdminNavbar from "./AdminNavbar";
 
 const ImageUpload = () => {
-  // const [image, setImage] = useState(null);
-  // const [previewUrl, setPreviewUrl] = useState(null);
+
   const [folder, setFolder] = useState("header"); // "header" como carpeta por defecto - Banner principal
   const [images, setImages] = useState([]); // Imágenes actuales en la carpeta seleccionada
   const [newImages, setNewImages] = useState({}); // Nuevas imágenes para reemplazo
@@ -35,6 +39,9 @@ const ImageUpload = () => {
   const [productCategory, setProductCategory] = useState("bocadillos"); // Categoría por defecto
   const [filterCategory, setFilterCategory] = useState("bocadillos"); // Estado para el select de listar productos
   const navigate = useNavigate();
+  const [allProducts, setAllProducts] = useState([]);
+
+  
 
   useEffect(() => {
     if (folder) fetchImages(); // Cargar imágenes cada vez que cambie la carpeta seleccionada
@@ -71,15 +78,17 @@ const ImageUpload = () => {
     }
   };
 
-  // Cargar productos desde Firestore filtrados por categoría
+  // Llama a la función para cargar todos los productos
   const fetchProducts = async () => {
     try {
       const productsCollection = collection(db, "products");
       const productSnapshot = await getDocs(productsCollection);
-      const productList = productSnapshot.docs
-        .map((doc) => ({ id: doc.id, ...doc.data() }))
-        .filter((product) => product.category === filterCategory);
+      const productList = productSnapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
       setProducts(productList);
+      setAllProducts(productList); // Almacena todos los productos
     } catch (error) {
       setErrorMessage("Error al cargar los productos.", error.errorMessage);
     }
@@ -209,288 +218,63 @@ const ImageUpload = () => {
     }
   };
 
-  const goToHome = () => {
-    navigate("/"); // Navega a la página de inicio
-  };
+  // const goToHome = () => {
+  //   navigate("/"); // Navega a la página de inicio
+  // };
 
   const filteredProducts = products.filter(
     (product) => product.category === filterCategory
   );
+  
 
+  
   return (
     <>
       <AdminNavbar />
-      <div className="flex flex-col items-center mt-24 mb-24">
+      <div className="flex flex-col items-center mt-24 mb-24 container mx-auto">
         <h1 className="mb-5 text-center">Panel de Administración</h1>
-
-        {/* Sección de carga de imágenes */}
-        <div className="flex flex-wrap justify-between w-full max-w-5xl mx-auto">
-          
-          <div className="bg-white shadow-md rounded-lg p-6 mb-8 w-full ">
-            <h2 className="mb-5 text-2xl">Subir Imagen</h2>
-
-            {/* Selector para elegir la carpeta/sección */}
-            <label htmlFor="folderSelect" className="mb-2">
-              Selecciona la categoría:
-            </label>
-            <select
-              id="folderSelect"
-              value={selectedCategory}
-              onChange={(e) => {
-                setSelectedCategory(e.target.value);
-                setFolder(e.target.value); // Aquí conectas la categoría seleccionada con la carpeta
-              }}
-              className="mb-4 border border-gray-300 rounded px-3 py-2"
-            >
-              <option value="header">Banner principal</option>
-              <option value="about">Sobre Nosotros</option>
-              <option value="bocadillos">Bocadillos</option>
-              <option value="sandwiches">Sandwiches</option>
-              <option value="especiales">Especiales</option>
-            </select>
-
-            {/* <input
-          type="file"
-          onChange={handleFileChange}
-          className="mb-4"
-          accept="image/*"
+        
+        <ImageUploadSection
+          selectedCategory={selectedCategory}
+          setFolder={setFolder}
+          setSelectedCategory={setSelectedCategory}
+          successMessage={successMessage}
+          errorMessage={errorMessage}
         />
-
-        {previewUrl && (
-          <img
-            src={previewUrl}
-            alt="Vista previa"
-            className="mb-4 w-full h-auto max-h-40 object-contain"
-          />
-        )}
-
-        <button
-          onClick={handleImageUpload}
-          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-        >
-          Subir Imagen
-        </button> */}
-
-            {successMessage && (
-              <p className="text-green-500 mt-4">{successMessage}</p>
-            )}
-            {errorMessage && (
-              <p className="text-red-500 mt-4">{errorMessage}</p>
-            )}
-          </div>
-
-          {/* Sección de reemplazo de imágenes */}
-            <div className="bg-white shadow-md rounded-lg p-6 mb-8 w-full">
-              <h2 className="mb-5 text-2xl">Reemplazar Imágenes en {folder}</h2>
-              <ul className="flex flex-wrap gap-8 justify-center mx-auto mt-8">
-                {images.map((image) => (
-                  <li
-                    key={image.name}
-                    className="mb-4 w-full sm:w-1/2 md:w-1/3 lg:w-1/4 bg-white shadow-lg rounded-lg p-4 border border-gray-200 hover:shadow-xl transition-shadow duration-200"
-                  >
-                    <div className="relative mb-4">
-                      <img
-                        src={image.url}
-                        alt={image.name}
-                        className="w-full h-auto max-h-60 object-contain rounded-md border border-gray-300"
-                      />
-                      {/* Previsualización de la nueva imagen */}
-                      {image.previewUrl && (
-                        <img
-                          src={image.previewUrl}
-                          alt="Previsualización"
-                          className="mt-2 w-full h-auto max-h-60 object-contain rounded-md border border-dashed border-gray-400"
-                        />
-                      )}
-                    </div>
-
-                    <input
-                      type="file"
-                      accept="image/*"
-                      onChange={(e) => handleFileChangeMenu(e, image.name)}
-                      className="mb-4 w-full cursor-pointer text-gray-700 text-sm"
-                    />
-
-                    <button
-                      onClick={() => handleReplaceImage(image.name)}
-                      className="bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded-md w-full text-center transition-colors duration-200 ease-in-out"
-                    >
-                      Reemplazar
-                    </button>
-                  </li>
-                ))}
-              </ul>
-            </div>
-        </div>
-
-        {/* Sección de Sobre Nosotros */}
-        <div className="flex flex-wrap justify-between w-full max-w-5xl mx-auto">
-          
-          <div className="bg-white shadow-md rounded-lg p-6 mb-8 w-full ">
-            <h2 className="mb-5 text-2xl">Seccion Sobre Nosotros</h2>
-
-             <textarea
-                value={aboutText}
-                onChange={(e) => setAboutText(e.target.value)}
-                className="w-full h-40 p-2 border border-gray-300 rounded"
-                placeholder="Escribe algo sobre nosotros..."
-              />
-
-            <button
-              onClick={handleSubmit}
-              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-            >
-              Guardar
-            </button>
-
-            {submittedContent && (
-              <div className="mt-6">
-                <h2 className="text-xl font-semibold">Contenido actual:</h2>
-                <p className="mt-2 p-4 border border-gray-300 rounded bg-gray-100">
-                  {submittedContent}
-                </p>
-              </div>
-            )}
-
-            {successMessage && (
-              <p className="text-green-500 mt-4">{successMessage}</p>
-            )}
-            {errorMessage && (
-              <p className="text-red-500 mt-4">{errorMessage}</p>
-            )}
-          </div>
-        </div>
-
-        {/* Sección de agregar producto */}
-        <div className="flex flex-wrap justify-between w-full max-w-5xl mx-auto">
-          
-          <div className="bg-white shadow-md rounded-lg p-6 mb-8 w-full md:w-1/2 max-w-full md:max-w-md">
-            <h2 className="mb-5 text-2xl">Agregar Producto</h2>
-
-            <input
-              type="text"
-              placeholder="Nombre del Producto"
-              value={productName}
-              onChange={(e) => setProductName(e.target.value)}
-              className="mb-4 border border-gray-300 rounded px-3 py-2 w-full"
-            />
-
-            <input
-              type="text"
-              placeholder="Descripción del Producto"
-              value={productDescription}
-              onChange={(e) => setProductDescription(e.target.value)}
-              className="mb-4 border border-gray-300 rounded px-3 py-2 w-full"
-            />
-
-            <input
-              type="number"
-              placeholder="Precio del Producto"
-              value={productPrice}
-              onChange={(e) => setProductPrice(e.target.value)}
-              className="mb-4 border border-gray-300 rounded px-3 py-2 w-full"
-            />
-
-            <label htmlFor="productCategory" className="mb-2">
-              Selecciona la categoría:
-            </label>
-            <select
-              id="productCategory"
-              value={productCategory}
-              onChange={(e) => setProductCategory(e.target.value)}
-              className="mb-4 border border-gray-300 rounded px-3 py-2 w-full"
-            >
-              <option value="bocadillos">Bocadillos</option>
-              <option value="sandwiches">Sandwiches</option>
-              <option value="especiales">Especiales</option>
-            </select>
-
-            <button
-              onClick={handleAddProduct}
-              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-            >
-              Agregar Producto
-            </button>
-
-            {successMessage && (
-              <p className="text-green-500 mt-4">{successMessage}</p>
-            )}
-            {errorMessage && (
-              <p className="text-red-500 mt-4">{errorMessage}</p>
-            )}
-          </div>
-
-          {/* Sección de lista de productos */}
-          <div className="bg-white shadow-md rounded-lg p-6 mb-8 w-full md:w-1/2 max-w-full md:max-w-md">
-            <h2 className="mb-5 text-2xl">Lista de Productos</h2>
-
-            <label htmlFor="filterCategory" className="mb-2">
-              Filtrar por categoría:
-            </label>
-            <select
-              id="filterCategory"
-              value={filterCategory}
-              onChange={(e) => setFilterCategory(e.target.value)}
-              className="mb-4 border border-gray-300 rounded px-3 py-2 w-full"
-            >
-              <option value="bocadillos">Bocadillos</option>
-              <option value="sandwiches">Sandwiches</option>
-              <option value="especiales">Especiales</option>
-            </select>
-
-            <ul>
-              {filteredProducts.map((product) => (
-                <li
-                  key={product.id}
-                  className="mb-4 flex items-center justify-between"
-                >
-                  {/* Contenedor de información del producto */}
-                  <div className="flex-1">
-                    <p className="font-bold text-lg">{product.name}</p>
-                    <p className="text-sm text-gray-600">
-                      {product.description}
-                    </p>
-                    <p className="text-green-600 font-semibold">
-                    €{product.price}
-                    </p>
-                  </div>
-
-                  {/* Botón de eliminar con ícono de tacho */}
-                  <button
-                    onClick={() => handleDeleteProduct(product.id)}
-                    className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded flex items-center"
-                    title="Eliminar" // Tooltip
-                  >
-                    {/* Ícono de tacho de basura */}
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      className="h-5 w-5 mr-2"
-                      viewBox="0 0 20 20"
-                      fill="currentColor"
-                    >
-                      <path
-                        fillRule="evenodd"
-                        d="M6 8a1 1 0 000 2h8a1 1 0 100-2H6zm2-3a1 1 0 000 2h4a1 1 0 100-2H8z"
-                        clipRule="evenodd"
-                      />
-                      <path d="M4 5a2 2 0 012-2h8a2 2 0 012 2v1H4V5zM5 9v8a2 2 0 002 2h6a2 2 0 002-2V9H5z" />
-                    </svg>
-                  </button>
-                </li>
-              ))}
-            </ul>
-          </div>
-        </div>
-
-        <button
-          onClick={goToHome}
-          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-        >
-          Volver al Sitio
-        </button>
+        
+        <ImageReplaceSection
+          images={images}
+          handleFileChangeMenu={handleFileChangeMenu}
+          handleReplaceImage={handleReplaceImage}
+        />
+        
+        <AboutSection
+          aboutText={aboutText}
+          setAboutText={setAboutText}
+          handleSubmit={handleSubmit}
+          submittedContent={submittedContent}
+        />
+        
+        <ProductSection
+          productName={productName}
+          setProductName={setProductName}
+          productDescription={productDescription}
+          setProductDescription={setProductDescription}
+          productPrice={productPrice}
+          setProductPrice={setProductPrice}
+          productCategory={productCategory}
+          setProductCategory={setProductCategory}
+          handleAddProduct={handleAddProduct}
+          filteredProducts={filteredProducts}
+          handleDeleteProduct={handleDeleteProduct}
+          allProducts={allProducts}
+        />
+        
+        <Notification successMessage={successMessage} errorMessage={errorMessage} />
       </div>
     </>
   );
+ 
 };
 
 export default ImageUpload;
