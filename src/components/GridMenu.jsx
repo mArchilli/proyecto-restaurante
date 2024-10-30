@@ -2,10 +2,12 @@ import { useEffect, useState } from 'react';
 import { storage } from '../services/firebase';
 import { ref, getDownloadURL } from 'firebase/storage';
 import { db } from '../services/firebase';
-import { collection, getDocs, query, where } from 'firebase/firestore';
+import { collection, getDocs } from 'firebase/firestore';
 import { Tabs, TabsList, TabsTrigger } from './ui/Tabs';
 import { Button } from './ui/Button';
 import Modal from 'react-modal';
+import { PDFDocument, rgb } from 'pdf-lib';
+import { saveAs } from 'file-saver';
 
 const GridMenu = () => {
   const [images, setImages] = useState([]);
@@ -37,21 +39,20 @@ const GridMenu = () => {
     }
   };
 
-  const fetchProducts = async (category) => {
+  const fetchProducts = async () => {
     try {
       const productsCollection = collection(db, 'products');
-      const q = query(productsCollection, where('category', '==', category));
-      const productSnapshot = await getDocs(q);
+      const productSnapshot = await getDocs(productsCollection);
       const productsData = productSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
       setProducts(productsData);
     } catch (error) {
-      console.error(`Error al obtener los productos de la categoría ${category}:`, error);
+      console.error('Error al obtener los productos:', error);
     }
   };
 
   useEffect(() => {
     fetchImages(activeTab);
-    fetchProducts(activeTab); 
+    fetchProducts();
   }, [activeTab]);
 
   const openModal = () => {
@@ -74,6 +75,88 @@ const GridMenu = () => {
     );
     setModalContent(menuContent);
     setIsModalOpen(true);
+  };
+
+  const generateMenuPDF = async () => {
+    try {
+      const pdfDoc = await PDFDocument.create();
+      const page = pdfDoc.addPage([600, 800]); // Tamaño de página
+      const { height } = page.getSize();
+  
+      // Estilos básicos para el PDF
+      const titleFontSize = 24;
+      const categoryFontSize = 20;
+      const productFontSize = 16;
+      const margin = 40;
+  
+      // Añadir título
+      page.drawText('Menú del Restaurante', {
+        x: margin,
+        y: height - margin - titleFontSize,
+        size: titleFontSize,
+        color: rgb(0, 0.53, 0.71),
+      });
+  
+      // Agrupar productos por categoría
+      const groupedProducts = products.reduce((acc, product) => {
+        if (!acc[product.category]) {
+          acc[product.category] = [];
+        }
+        acc[product.category].push(product);
+        return acc;
+      }, {});
+  
+      // Añadir productos con precios
+      let yPosition = height - margin - titleFontSize * 2;
+      for (const category in groupedProducts) {
+        // Añadir subtítulo para la categoría
+        page.drawText(category.charAt(0).toUpperCase() + category.slice(1), {
+          x: margin,
+          y: yPosition,
+          size: categoryFontSize,
+          color: rgb(0, 0.53, 0.71),
+        });
+  
+        yPosition -= categoryFontSize + 10;
+  
+        groupedProducts[category].forEach((product) => {
+          const productText = `${product.name} - €${product.price}`;
+          const descriptionText = product.description;
+  
+          // Nombre y precio del producto
+          page.drawText(productText, {
+            x: margin,
+            y: yPosition,
+            size: productFontSize,
+            color: rgb(0, 0, 0),
+          });
+  
+          yPosition -= productFontSize + 5;
+  
+          // Descripción del producto (si tiene)
+          if (descriptionText) {
+            page.drawText(descriptionText, {
+              x: margin + 10,
+              y: yPosition,
+              size: productFontSize - 2,
+              color: rgb(0.5, 0.5, 0.5),
+            });
+            yPosition -= productFontSize + 5;
+          }
+  
+          yPosition -= 10; // Espacio entre productos
+        });
+  
+        yPosition -= 20; // Espacio entre categorías
+      }
+  
+      // Guardar el PDF y descargarlo
+      const pdfBytes = await pdfDoc.save();
+      const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+      saveAs(blob, 'menu_restaurante.pdf');
+    } catch (error) {
+      console.error('Error generando el PDF:', error);
+    }
   };
 
   const getImageClasses = (index) => {
@@ -131,7 +214,7 @@ const GridMenu = () => {
         <p className="text-sm text-muted-foreground mb-4">
           V - Vegetariano | GF - Sin gluten
         </p>
-        <Button variant="outline">Descargar menú completo (PDF)</Button>
+        <Button variant="outline" onClick={generateMenuPDF}>Descargar menú completo (PDF)</Button>
       </div>
 
       <Modal
@@ -155,17 +238,14 @@ const GridMenu = () => {
             height: 'auto',
             padding: '20px',
             borderRadius: '8px',
-            backgroundColor: '#fff',
+            backgroundColor: 'white',
           },
         }}
       >
-        <button
-          onClick={() => setIsModalOpen(false)}
-          className="absolute top-2 right-2 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-full p-2"
-        >
-          X
+        <button onClick={() => setIsModalOpen(false)} className="absolute top-2 right-2">
+          ✖️
         </button>
-        <div>{modalContent}</div>
+        {modalContent}
       </Modal>
     </section>
   );
