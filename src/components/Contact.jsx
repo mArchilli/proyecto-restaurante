@@ -9,7 +9,7 @@ export default function Contact() {
   }, []);
 
   return (
-    <section className="bg-gray-100 py-12" id="contact">
+    <section className="bg-gray-200 py-12 lg:py-16" id="contact">
       <div className="container mx-auto px-4">
         <h2 className="text-3xl font-bold text-center mb-8">Visítanos</h2>
         <div className="flex flex-col md:flex-row items-start space-y-6 md:space-y-0 md:space-x-8">

@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 import { storage } from '../services/firebase';
 import { ref, getDownloadURL } from 'firebase/storage';
-import { db } from '../services/firebase'; 
-import { collection, getDocs, query, where } from 'firebase/firestore'; 
+import { db } from '../services/firebase';
+import { collection, getDocs, query, where } from 'firebase/firestore';
 import { Tabs, TabsList, TabsTrigger } from './ui/Tabs';
 import { Button } from './ui/Button';
 import Modal from 'react-modal';
@@ -13,11 +13,11 @@ const GridMenu = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalContent, setModalContent] = useState(null);
   const [products, setProducts] = useState([]);
-  const [isLoading, setIsLoading] = useState(true); // Nuevo estado de carga
+  const [isLoading, setIsLoading] = useState(true);
 
   const fetchImages = async (folder) => {
     try {
-      setIsLoading(true); // Activar carga al iniciar la obtención de imágenes
+      setIsLoading(true);
       const imageRefs = Array.from({ length: 7 }, (_, i) =>
         ref(storage, `images/${folder}/${folder}${i + 1}.jpg`)
       );
@@ -33,7 +33,7 @@ const GridMenu = () => {
     } catch (error) {
       console.error(`Error al obtener las imágenes de la carpeta ${folder}:`, error);
     } finally {
-      setIsLoading(false); // Desactivar carga al finalizar
+      setIsLoading(false);
     }
   };
 
@@ -87,7 +87,7 @@ const GridMenu = () => {
   };
 
   return (
-    <section className="container mx-auto px-4 py-8" id='menu'>
+    <section className="container mx-auto px-4 py-12 lg:py-16" id='menu'>
       <h2 className="text-3xl font-bold tracking-tighter text-center mb-4">Conoce nuestro menú</h2>
 
       <Tabs defaultValue={activeTab} onValueChange={setActiveTab}>
@@ -101,26 +101,26 @@ const GridMenu = () => {
         </TabsList>
       </Tabs>
 
-      <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+      <div className="grid grid-cols-2 sm:grid-cols-3">
         {isLoading ? (
           // Skeletons para carga de imágenes
           Array.from({ length: 7 }).map((_, index) => (
             <div
               key={index}
-              className="w-full h-80 bg-gray-300 animate-pulse rounded-lg"
+              className={`w-full h-80 m-2 bg-gray-300 animate-pulse rounded-lg ${index === 6 ? 'hidden sm:block' : ''}`}
             ></div>
           ))
         ) : (
           images.map((image, index) => (
             <figure
               key={image.id}
-              className={`relative cursor-pointer ${getImageClasses(index)}`}
+              className={`relative m-2 cursor-pointer ${getImageClasses(index)} ${index === 6 ? 'hidden sm:block' : ''}`}
               onClick={openModal}
             >
               <img
                 src={image.src}
                 alt={image.alt}
-                className="w-full h-80 object-cover object-center rounded-lg shadow-lg hover:opacity-80 transition-opacity duration-300"
+                className="w-full h-60 object-cover object-center rounded-lg shadow-lg hover:opacity-80 transition-opacity duration-300"
               />
             </figure>
           ))
