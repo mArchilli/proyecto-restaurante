@@ -12,10 +12,12 @@ const GridMenu = () => {
   const [activeTab, setActiveTab] = useState('bocadillos');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalContent, setModalContent] = useState(null);
-  const [products, setProducts] = useState([]); 
+  const [products, setProducts] = useState([]);
+  const [isLoading, setIsLoading] = useState(true); // Nuevo estado de carga
 
   const fetchImages = async (folder) => {
     try {
+      setIsLoading(true); // Activar carga al iniciar la obtención de imágenes
       const imageRefs = Array.from({ length: 7 }, (_, i) =>
         ref(storage, `images/${folder}/${folder}${i + 1}.jpg`)
       );
@@ -30,6 +32,8 @@ const GridMenu = () => {
       setImages(imagesData);
     } catch (error) {
       console.error(`Error al obtener las imágenes de la carpeta ${folder}:`, error);
+    } finally {
+      setIsLoading(false); // Desactivar carga al finalizar
     }
   };
 
@@ -53,7 +57,7 @@ const GridMenu = () => {
   const openModal = () => {
     const menuContent = (
       <div>
-        <h2 className="text-2xl font-bold mb-4" >{`Menú de ${activeTab.charAt(0).toUpperCase() + activeTab.slice(1)}`}</h2>
+        <h2 className="text-2xl font-bold mb-4">{`Menú de ${activeTab.charAt(0).toUpperCase() + activeTab.slice(1)}`}</h2>
         <ul>
           {products.map(product => (
             <li key={product.id} className="mb-6">
@@ -98,19 +102,29 @@ const GridMenu = () => {
       </Tabs>
 
       <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-        {images.map((image, index) => (
-          <figure
-            key={image.id}
-            className={`relative cursor-pointer ${getImageClasses(index)}`}
-            onClick={openModal}
-          >
-            <img
-              src={image.src}
-              alt={image.alt}
-              className="w-full h-80 object-cover object-center rounded-lg shadow-lg hover:opacity-80 transition-opacity duration-300"
-            />
-          </figure>
-        ))}
+        {isLoading ? (
+          // Skeletons para carga de imágenes
+          Array.from({ length: 7 }).map((_, index) => (
+            <div
+              key={index}
+              className="w-full h-80 bg-gray-300 animate-pulse rounded-lg"
+            ></div>
+          ))
+        ) : (
+          images.map((image, index) => (
+            <figure
+              key={image.id}
+              className={`relative cursor-pointer ${getImageClasses(index)}`}
+              onClick={openModal}
+            >
+              <img
+                src={image.src}
+                alt={image.alt}
+                className="w-full h-80 object-cover object-center rounded-lg shadow-lg hover:opacity-80 transition-opacity duration-300"
+              />
+            </figure>
+          ))
+        )}
       </div>
 
       <div className="mt-12 text-center">
@@ -120,7 +134,6 @@ const GridMenu = () => {
         <Button variant="outline">Descargar menú completo (PDF)</Button>
       </div>
 
-      {/* Modal */}
       <Modal
         isOpen={isModalOpen}
         onRequestClose={() => setIsModalOpen(false)}

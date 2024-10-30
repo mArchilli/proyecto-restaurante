@@ -4,39 +4,50 @@ import { ref, getDownloadURL } from "firebase/storage";
 
 const Header = () => {
   const [backgroundImageUrl, setBackgroundImageUrl] = useState("");
+  const [isLoading, setIsLoading] = useState(true); // Estado de carga para el skeleton
 
   // Cargar la imagen desde Firebase Storage
   useEffect(() => {
     const fetchImage = async () => {
       try {
-        // Referencia a la imagen en la carpeta 'header' en Firebase Storage
         const imageRef = ref(storage, "images/header/header-imagen.jpg");
-        const url = await getDownloadURL(imageRef); // Obtén la URL de descarga
-        setBackgroundImageUrl(url); // Guarda la URL en el estado
+        const url = await getDownloadURL(imageRef);
+        setBackgroundImageUrl(url);
+        setIsLoading(false); // Oculta el skeleton cuando la imagen está cargada
       } catch (error) {
         console.error("Error al obtener la imagen:", error);
+        setIsLoading(false); // Asegura que el skeleton se oculta incluso en caso de error
       }
     };
 
-    fetchImage(); // Llama a la función cuando el componente se monta
+    fetchImage();
   }, []);
 
   return (
     <header
       id="header"
-      className="relative w-full bg-bottom bg-cover flex flex-col justify-center items-center h-[1000px] py-40"
+      className="relative w-full flex flex-col justify-center items-center h-[1000px] py-40"
       style={{
-        backgroundImage: `url(${backgroundImageUrl})`,
+        backgroundImage: isLoading ? "" : `url(${backgroundImageUrl})`,
         backgroundSize: "cover",
-        backgroundPosition: "center", 
+        backgroundPosition: "center",
       }}
     >
-      <div className="absolute inset-0 bg-black opacity-50"></div>
-      <div className="relative text-white z-9">
+      {/* Skeleton para el fondo */}
+      {isLoading && (
+        <div className="absolute inset-0 bg-gray-300 animate-pulse"></div>
+      )}
+
+      {/* Capa de superposición cuando la imagen está cargada */}
+      {!isLoading && (
+        <div className="absolute inset-0 bg-black opacity-50"></div>
+      )}
+
+      {/* Contenido de texto */}
+      <div className="relative text-white z-11">
         <h1 className="text-5xl md:text-7xl lg:text-9xl font-DancingScript">
           Tasca La Fundición
         </h1>
-        {/* <p className="text-1xl md:text-3xl lg:text-5xl mt-4 font-roboto">Tasca la Fundición</p> */}
       </div>
     </header>
   );
