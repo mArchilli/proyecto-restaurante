@@ -1,4 +1,4 @@
-import ImageUploadSection from "./ImageUploadSection";
+// import ImageUploadSection from "./ImageUploadSection";
 import ImageReplaceSection from "./ImageReplaceSection";
 import AboutSection from "./AboutSection";
 import ProductSection from "./ProductSection";
@@ -33,7 +33,6 @@ const ImageUpload = () => {
   const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [products, setProducts] = useState([]); // Productos en Firestore
-  const [selectedCategory, setSelectedCategory] = useState("header");
   const [aboutText, setAboutText] = useState();
   const [submittedContent, setSubmittedContent] = useState(null); // Estado para mostrar el contenido guardado
   const [productName, setProductName] = useState("");
@@ -237,15 +236,18 @@ const ImageUpload = () => {
       <div className="flex flex-col items-center mt-24 mb-24 container mx-auto">
         <h1 className="mb-5 text-center">Panel de Administración</h1>
         
-        <ImageUploadSection
+        {/* <ImageUploadSection
           selectedCategory={selectedCategory}
           setFolder={setFolder}
           setSelectedCategory={setSelectedCategory}
           successMessage={successMessage}
           errorMessage={errorMessage}
-        />
+        /> */}
         
         <ImageReplaceSection
+          setFolder={setFolder}
+          successMessage={successMessage}
+          errorMessage={errorMessage}
           images={images}
           handleFileChangeMenu={handleFileChangeMenu}
           handleReplaceImage={handleReplaceImage}
