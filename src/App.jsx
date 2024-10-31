@@ -9,7 +9,7 @@ const App = () => {
       <Routes>
         <Route path="/" element={<LandingPage />} />
         <Route path="/login" element={<Login />} />
-        <Route path="/upload-images" element={<UploadImages />} /> {/* Añadir ruta para UploadImages */}
+        <Route path="/admin" element={<UploadImages />} /> {/* Añadir ruta para panel de administracion */}
       </Routes>
     </Router>
   );
