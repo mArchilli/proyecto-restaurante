@@ -3,6 +3,7 @@ import ImageReplaceSection from "./ImageReplaceSection";
 import AboutSection from "./AboutSection";
 import ProductSection from "./ProductSection";
 import Notification from "./Notification";
+import UploadPDF from "./UploadPdf";
 import { useState, useEffect } from "react";
 import { storage, db } from "../services/firebase";
 import {
@@ -256,6 +257,8 @@ const ImageUpload = () => {
           handleSubmit={handleSubmit}
           submittedContent={submittedContent}
         />
+
+        <UploadPDF/>
         
         <ProductSection
           productName={productName}
