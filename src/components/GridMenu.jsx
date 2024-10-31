@@ -6,8 +6,6 @@ import { collection, getDocs } from 'firebase/firestore';
 import { Tabs, TabsList, TabsTrigger } from './ui/Tabs';
 import { Button } from './ui/Button';
 import Modal from 'react-modal';
-import { PDFDocument, rgb } from 'pdf-lib';
-import { saveAs } from 'file-saver';
 
 const GridMenu = () => {
   const [images, setImages] = useState([]);
@@ -16,6 +14,21 @@ const GridMenu = () => {
   const [modalContent, setModalContent] = useState(null);
   const [products, setProducts] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [pdfUrl, setPdfUrl] = useState(null);
+
+  useEffect(() => {
+    const fetchPdfUrl = async () => {
+      try {
+        const pdfRef = ref(storage, 'pdfs/menu.pdf');
+        const url = await getDownloadURL(pdfRef);
+        setPdfUrl(url);
+      } catch (error) {
+        console.error('Error al obtener la URL del PDF:', error);
+      }
+    };
+
+    fetchPdfUrl();
+  }, []);
 
   const fetchImages = async (folder) => {
     try {
@@ -56,11 +69,12 @@ const GridMenu = () => {
   }, [activeTab]);
 
   const openModal = () => {
+    const filteredProducts = products.filter(product => product.category === activeTab);
     const menuContent = (
       <div>
         <h2 className="text-2xl font-bold mb-4">{`Menú de ${activeTab.charAt(0).toUpperCase() + activeTab.slice(1)}`}</h2>
         <ul>
-          {products.map(product => (
+          {filteredProducts.map(product => (
             <li key={product.id} className="mb-6">
               <div className="flex justify-between items-center">
                 <h3 className="text-xl font-semibold">{product.name}</h3>
@@ -75,88 +89,6 @@ const GridMenu = () => {
     );
     setModalContent(menuContent);
     setIsModalOpen(true);
-  };
-
-  const generateMenuPDF = async () => {
-    try {
-      const pdfDoc = await PDFDocument.create();
-      const page = pdfDoc.addPage([600, 800]); // Tamaño de página
-      const { height } = page.getSize();
-  
-      // Estilos básicos para el PDF
-      const titleFontSize = 24;
-      const categoryFontSize = 20;
-      const productFontSize = 16;
-      const margin = 40;
-  
-      // Añadir título
-      page.drawText('Menú del Restaurante', {
-        x: margin,
-        y: height - margin - titleFontSize,
-        size: titleFontSize,
-        color: rgb(0, 0.53, 0.71),
-      });
-  
-      // Agrupar productos por categoría
-      const groupedProducts = products.reduce((acc, product) => {
-        if (!acc[product.category]) {
-          acc[product.category] = [];
-        }
-        acc[product.category].push(product);
-        return acc;
-      }, {});
-  
-      // Añadir productos con precios
-      let yPosition = height - margin - titleFontSize * 2;
-      for (const category in groupedProducts) {
-        // Añadir subtítulo para la categoría
-        page.drawText(category.charAt(0).toUpperCase() + category.slice(1), {
-          x: margin,
-          y: yPosition,
-          size: categoryFontSize,
-          color: rgb(0, 0.53, 0.71),
-        });
-  
-        yPosition -= categoryFontSize + 10;
-  
-        groupedProducts[category].forEach((product) => {
-          const productText = `${product.name} - €${product.price}`;
-          const descriptionText = product.description;
-  
-          // Nombre y precio del producto
-          page.drawText(productText, {
-            x: margin,
-            y: yPosition,
-            size: productFontSize,
-            color: rgb(0, 0, 0),
-          });
-  
-          yPosition -= productFontSize + 5;
-  
-          // Descripción del producto (si tiene)
-          if (descriptionText) {
-            page.drawText(descriptionText, {
-              x: margin + 10,
-              y: yPosition,
-              size: productFontSize - 2,
-              color: rgb(0.5, 0.5, 0.5),
-            });
-            yPosition -= productFontSize + 5;
-          }
-  
-          yPosition -= 10; // Espacio entre productos
-        });
-  
-        yPosition -= 20; // Espacio entre categorías
-      }
-  
-      // Guardar el PDF y descargarlo
-      const pdfBytes = await pdfDoc.save();
-      const blob = new Blob([pdfBytes], { type: 'application/pdf' });
-      saveAs(blob, 'menu_restaurante.pdf');
-    } catch (error) {
-      console.error('Error generando el PDF:', error);
-    }
   };
 
   const getImageClasses = (index) => {
@@ -186,7 +118,6 @@ const GridMenu = () => {
 
       <div className="grid grid-cols-2 sm:grid-cols-3">
         {isLoading ? (
-          // Skeletons para carga de imágenes
           Array.from({ length: 7 }).map((_, index) => (
             <div
               key={index}
@@ -214,7 +145,13 @@ const GridMenu = () => {
         <p className="text-sm text-muted-foreground mb-4">
           V - Vegetariano | GF - Sin gluten
         </p>
-        <Button variant="outline" onClick={generateMenuPDF}>Descargar menú completo (PDF)</Button>
+        <Button 
+          variant="outline" 
+          onClick={() => window.open(pdfUrl, '_blank')} 
+          disabled={!pdfUrl}
+        >
+          Descargar menú completo (PDF)
+        </Button>
       </div>
 
       <Modal
@@ -242,9 +179,11 @@ const GridMenu = () => {
           },
         }}
       >
-        <button onClick={() => setIsModalOpen(false)} className="absolute top-2 right-2">
+        {/* <button onClick={() => setIsModalOpen(false)} className="absolute top-2 right-2">
           ✖️
-        </button>
+        </button> */}
+
+        <Button variant="outline" onClick={() => setIsModalOpen(false)} className="absolute top-2 right-2">✖️</Button>
         {modalContent}
       </Modal>
     </section>
