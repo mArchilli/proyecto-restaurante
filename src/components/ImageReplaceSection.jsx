@@ -4,7 +4,7 @@ import Modal from 'react-modal';
 import { Button } from './ui/Button';
 import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 
-const resizeAndCropImage = (imageSrc, crop, resolution) => {
+const resizeAndCropImage = (imageSrc, crop) => {
   return new Promise((resolve, reject) => {
     const img = new Image();
     img.src = imageSrc;
@@ -13,14 +13,14 @@ const resizeAndCropImage = (imageSrc, crop, resolution) => {
       const canvas = document.createElement('canvas');
       const ctx = canvas.getContext('2d');
 
-      // Establecer las dimensiones del canvas basadas en la resolución deseada
-      canvas.width = resolution.width;
-      canvas.height = resolution.height;
+      // Establecer las dimensiones del canvas basadas en el área recortada
+      canvas.width = crop.width;
+      canvas.height = crop.height;
 
       const scaleX = img.width / img.naturalWidth; // Escala para obtener la relación correcta
       const scaleY = img.height / img.naturalHeight; // Escala para obtener la relación correcta
 
-      // Ajustar el recorte
+      // Ajustar el recorte en el canvas sin redimensionarlo
       ctx.drawImage(
         img,
         crop.x / scaleX, // Ajustar la posición del recorte en el eje X
@@ -29,8 +29,8 @@ const resizeAndCropImage = (imageSrc, crop, resolution) => {
         crop.height / scaleY, // Ajustar la altura del recorte
         0, // X en el canvas
         0, // Y en el canvas
-        resolution.width, // Ancho en el canvas
-        resolution.height // Alto en el canvas
+        crop.width, // Ancho en el canvas (sin redimensionar)
+        crop.height // Alto en el canvas (sin redimensionar)
       );
 
       // Convertir el canvas a un blob
