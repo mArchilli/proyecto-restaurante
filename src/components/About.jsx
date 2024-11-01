@@ -43,7 +43,7 @@ const About = () => {
               <img
                 src={imageUrl}
                 alt="Imagen de Tasca La Fundición"
-                className="w-full h-auto rounded-lg"
+                className="w-full max-h-96 rounded-lg"
               />
               <figcaption className="sr-only">Imagen de Tasca La Fundición</figcaption>
             </figure>
