@@ -13,27 +13,24 @@ const resizeAndCropImage = (imageSrc, crop) => {
       const canvas = document.createElement('canvas');
       const ctx = canvas.getContext('2d');
 
-      // Establecer las dimensiones del canvas basadas en el área recortada
       canvas.width = crop.width;
       canvas.height = crop.height;
 
-      const scaleX = img.width / img.naturalWidth; // Escala para obtener la relación correcta
-      const scaleY = img.height / img.naturalHeight; // Escala para obtener la relación correcta
+      const scaleX = img.width / img.naturalWidth;
+      const scaleY = img.height / img.naturalHeight;
 
-      // Ajustar el recorte en el canvas sin redimensionarlo
       ctx.drawImage(
         img,
-        crop.x / scaleX, // Ajustar la posición del recorte en el eje X
-        crop.y / scaleY, // Ajustar la posición del recorte en el eje Y
-        crop.width / scaleX, // Ajustar el ancho del recorte
-        crop.height / scaleY, // Ajustar la altura del recorte
-        0, // X en el canvas
-        0, // Y en el canvas
-        crop.width, // Ancho en el canvas (sin redimensionar)
-        crop.height // Alto en el canvas (sin redimensionar)
+        crop.x / scaleX,
+        crop.y / scaleY,
+        crop.width / scaleX,
+        crop.height / scaleY,
+        0,
+        0,
+        crop.width,
+        crop.height
       );
 
-      // Convertir el canvas a un blob
       canvas.toBlob((blob) => resolve(blob), 'image/jpeg');
     };
 
@@ -51,6 +48,7 @@ const ImageReplaceSection = ({ images, setFolder }) => {
   const [isSaved, setIsSaved] = useState(false);
   const [selectedFolder, setSelectedFolder] = useState("header");
   const [imageToReplace, setImageToReplace] = useState(null);
+  const [errorMessage, setErrorMessage] = useState('');
 
   const storage = getStorage();
 
@@ -58,6 +56,7 @@ const ImageReplaceSection = ({ images, setFolder }) => {
     setCroppedArea(croppedAreaPixels);
   }, []);
 
+  const MAX_SIZE = 1048576; // 1 MB en bytes
   const resolutions = {
     '1920x600': { width: 1920, height: 600 },
     '800x800': { width: 800, height: 800 },
@@ -85,6 +84,21 @@ const ImageReplaceSection = ({ images, setFolder }) => {
     }
   };
 
+  const handleImageSelection = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      if (file.size > MAX_SIZE) {
+        setErrorMessage("La imagen seleccionada supera el tamaño recomendado de 1 MB. Por favor, elige una imagen más ligera.");
+        return;
+      } else {
+        setErrorMessage('');
+      }
+      const reader = new FileReader();
+      reader.onload = () => setSelectedImage(reader.result);
+      reader.readAsDataURL(file);
+    }
+  };
+
   return (
     <div className="bg-white shadow-lg rounded-lg p-6 mb-8 w-full mx-auto">
       <h2 className="mb-5 text-2xl font-semibold text-gray-800">Sección de Imágenes</h2>
@@ -108,6 +122,12 @@ const ImageReplaceSection = ({ images, setFolder }) => {
         <option value="especiales">Especiales</option>
       </select>
 
+      {errorMessage && (
+        <p className="text-red-600 bg-red-100 border border-red-300 rounded-md p-2 mb-4">
+          {errorMessage}
+        </p>
+      )}
+
       {isSaved && (
         <p className="text-green-600 bg-green-100 border border-green-300 rounded-md p-2 mb-4">
           ¡Imagen guardada correctamente!
@@ -122,12 +142,7 @@ const ImageReplaceSection = ({ images, setFolder }) => {
             <input
               type="file"
               accept="image/*"
-              onChange={(e) => {
-                const file = e.target.files[0];
-                const reader = new FileReader();
-                reader.onload = () => setSelectedImage(reader.result);
-                reader.readAsDataURL(file);
-              }}
+              onChange={handleImageSelection}
               className="my-4 w-full cursor-pointer text-gray-700 text-sm"
             />
 

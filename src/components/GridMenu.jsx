@@ -31,8 +31,16 @@ const GridMenu = () => {
   }, []);
 
   const fetchImages = async (folder) => {
+    setIsLoading(true);
+    const cachedImages = sessionStorage.getItem(folder);
+    
+    if (cachedImages) {
+      setImages(JSON.parse(cachedImages));
+      setIsLoading(false);
+      return;
+    }
+    
     try {
-      setIsLoading(true);
       const imageRefs = Array.from({ length: 7 }, (_, i) =>
         ref(storage, `images/${folder}/${folder}${i + 1}.jpg`)
       );
@@ -44,6 +52,7 @@ const GridMenu = () => {
         .map((url, index) => (url ? { id: index + 1, src: url, alt: `${folder} ${index + 1}` } : null))
         .filter(Boolean);
 
+      sessionStorage.setItem(folder, JSON.stringify(imagesData));
       setImages(imagesData);
     } catch (error) {
       console.error(`Error al obtener las imágenes de la carpeta ${folder}:`, error);
@@ -134,6 +143,7 @@ const GridMenu = () => {
               <img
                 src={image.src}
                 alt={image.alt}
+                loading="lazy"
                 className="w-full h-60 object-cover object-center rounded-lg shadow-lg hover:opacity-80 transition-opacity duration-300"
               />
             </figure>
@@ -179,10 +189,6 @@ const GridMenu = () => {
           },
         }}
       >
-        {/* <button onClick={() => setIsModalOpen(false)} className="absolute top-2 right-2">
-          ✖️
-        </button> */}
-
         <Button variant="outline" onClick={() => setIsModalOpen(false)} className="absolute top-2 right-2">✖️</Button>
         {modalContent}
       </Modal>
