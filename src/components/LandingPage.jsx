@@ -21,15 +21,19 @@ const LandingPage = () => {
     <div className="flex flex-col h-screen">
       <Navbar />
       <Header />
-      <div data-aos="fade-right">
+
+      <div data-aos="fade-right"  data-aos-delay="200">
         <About />
       </div>
-      <div data-aos="fade-right">
+
+      <div data-aos="fade-left"  data-aos-delay="200">
         <GridMenu />
       </div>
-      <div data-aos="fade-right">
+
+      <div data-aos="fade-right"  data-aos-delay="200">
         <Contact />
       </div>
+
       <Footer />
     </div>
   );
