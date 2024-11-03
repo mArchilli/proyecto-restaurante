@@ -159,6 +159,7 @@ const GridMenu = () => {
           variant="outline" 
           onClick={() => window.open(pdfUrl, '_blank')} 
           disabled={!pdfUrl}
+          className='hover:scale-105 hover:opacity-90 transition-transform duration-200 ease-in-out'
         >
           Descargar menú completo (PDF)
         </Button>
@@ -189,7 +190,7 @@ const GridMenu = () => {
           },
         }}
       >
-        <Button variant="outline" onClick={() => setIsModalOpen(false)} className="absolute top-2 right-2 hover:scale-105 hover:opacity-90 transition-transform duration-300 ease-in-out">✖️</Button>
+        <Button variant="outline" onClick={() => setIsModalOpen(false)} className="absolute top-2 right-2 ">✖️</Button>
         {modalContent}
       </Modal>
     </section>

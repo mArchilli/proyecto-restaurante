@@ -1,11 +1,11 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { auth } from '../services/firebase'; // Importa Firebase Auth
-import { signOut } from 'firebase/auth'; // Importa el método de cierre de sesión
+import { auth } from '../services/firebase';
+import { signOut } from 'firebase/auth';
 
 const AdminNavbar = () => {
-  const [isOpen, setIsOpen] = useState(false); // Estado para controlar el menú desplegable
-  const navigate = useNavigate(); // Para redirigir después de cerrar sesión
+  const [isOpen, setIsOpen] = useState(false);
+  const navigate = useNavigate();
 
   const handleLogout = async () => {
     try {
@@ -17,44 +17,55 @@ const AdminNavbar = () => {
   };
 
   const toggleMenu = () => {
-    setIsOpen(!isOpen); // Alterna el estado del menú
+    setIsOpen(!isOpen);
   };
 
   return (
-    <nav className="fixed top-0 left-0 w-full text-white py-4 shadow-md z-10 bg-black">
+    <nav className="fixed top-0 left-0 w-full py-4 z-10 transition-colors duration-300 bg-black">
       <div className="container mx-auto flex justify-between items-center px-4">
-        <div className="text-2xl font-bold">Admin Panel</div>
+        <div className="text-2xl font-bold text-white">
+          Admin Panel
+        </div>
+
         {/* Botón para abrir/cerrar el menú en vista móvil */}
         <button 
           onClick={toggleMenu} 
-          className="md:hidden focus:outline-none bg-white text-black px-4 py-2 rounded-lg"
+          className="md:hidden focus:outline-none bg-white text-black py-2 px-3 rounded transition duration-300 hover:bg-gray-200"
         >
-          {isOpen ? 'Cerrar' : 'Menú'}
+          {isOpen ? (
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          ) : (
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16m-7 6h7" />
+            </svg>
+          )}
         </button>
 
-        {/* Menú desplegable */}
+        {/* Menú */}
         <ul 
-          className={`flex flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-4 transition-all duration-300 ease-in-out 
-                      ${isOpen ? 'absolute top-full left-0 bg-black w-full py-4 md:py-0 md:relative md:w-auto' : 'hidden md:flex'}`}
+          className={`flex flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-4 absolute md:relative top-full left-0 w-full md:w-auto transition-all duration-300 transform md:transform-none ${
+            isOpen ? 'opacity-100 bg-black' : 'opacity-0 pointer-events-none'
+          } md:opacity-100 md:pointer-events-auto md:bg-transparent`}
         >
-          <li className="text-center">
-            <Link to="/upload-images" className="block px-4 py-2 hover:bg-gray-700 rounded-md transition-all text-white">
+          <li className="py-2 px-4">
+            <Link to="/admin" className="relative text-white hover:text-gray-300 transition duration-300">
               Subir Imagen
             </Link>
           </li>
-          <li className="text-center">
-            <Link to="/" className="block px-4 py-2 hover:bg-gray-700 rounded-md transition-all text-white">
+          <li className="py-2 px-4">
+            <Link to="/" className="relative text-white hover:text-gray-300 transition duration-300">
               Volver al Inicio
             </Link>
           </li>
-          <li className="text-center">
-            <Link 
-              to="/login" 
-              className="block px-4 py-2 hover:bg-gray-700 rounded-md transition-all text-white" 
-              onClick={handleLogout}
+          <li>
+            <button 
+              onClick={handleLogout} 
+              className="relative text-black bg-white hover:text-white hover:bg-black hover:border-white transition duration-300"
             >
               Cerrar Sesión
-            </Link>
+            </button>
           </li>
         </ul>
       </div>

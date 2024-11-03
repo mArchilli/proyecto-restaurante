@@ -2,6 +2,10 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom'; // Importa useNavigate para la redirección
 import { auth } from '../services/firebase'; // Importa Firebase Auth
 import { signInWithEmailAndPassword } from 'firebase/auth';
+import { onAuthStateChanged } from 'firebase/auth';
+
+
+
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -17,7 +21,7 @@ const Login = () => {
       await signInWithEmailAndPassword(auth, email, password);
       
       // Redirige al componente UploadImages tras el inicio de sesión exitoso
-      navigate('/upload-images');
+      navigate('/admin');
       
     } catch (error) {
       console.error('Error en el inicio de sesión:', error);
@@ -29,6 +33,14 @@ const Login = () => {
   const goToHome = () => {
     navigate('/');
   };
+
+  onAuthStateChanged(auth, (user) => {
+    if (user) {
+      console.log("Usuario autenticado:", user);
+    } else {
+      console.log("No hay usuario autenticado");
+    }
+  });
 
   return (
     <>
