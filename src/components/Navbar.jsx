@@ -1,26 +1,10 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { auth } from '../services/firebase';
+
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false); // Estado para controlar el menú desplegable
-  const [ setIsAuthenticated] = useState(false); // Estado de autenticación del usuario
   const [navbarBackground, setNavbarBackground] = useState('transparent'); // Estado para el background del navbar
-  const navigate = useNavigate();
 
-  // Efecto para verificar si el usuario está autenticado
-  useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged((user) => {
-      if (user) {
-        setIsAuthenticated(true); // Usuario autenticado
-      } else {
-        setIsAuthenticated(false); // Usuario no autenticado
-        navigate('/login'); // Redirige al login si no está autenticado
-      }
-    });
-
-    return () => unsubscribe();
-  }, [navigate]);
 
   // Efecto para cambiar el background del navbar en función del scroll
   useEffect(() => {
@@ -108,22 +92,6 @@ const Navbar = () => {
               Ubicación
             </a>
           </li>
-          {/* {isAuthenticated ? (
-            <li className="py-2 px-4">
-              <button
-                onClick={handleLogout}
-                className="relative text-white hover:text-gray-300 transition duration-300"
-              >
-                Cerrar Sesión
-              </button>
-            </li>
-          ) : (
-            <li className="py-2 px-4">
-              <a href="/login" className="relative text-white hover:text-gray-300 transition duration-300">
-                Ingresar
-              </a>
-            </li>
-          )} */}
         </ul>
       </div>
     </nav>

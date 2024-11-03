@@ -1,17 +1,26 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom'; // Importa useNavigate para la redirección
 import { auth } from '../services/firebase'; // Importa Firebase Auth
-import { signInWithEmailAndPassword } from 'firebase/auth';
-import { onAuthStateChanged } from 'firebase/auth';
-
-
-
+import { signInWithEmailAndPassword, onAuthStateChanged } from 'firebase/auth';
 
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState(''); // Estado para almacenar el mensaje de error
   const navigate = useNavigate(); // Inicializa useNavigate para la redirección
+
+  useEffect(() => {
+    // Verifica si el usuario está autenticado
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        // Si el usuario está autenticado, redirigir a la página de administración
+        navigate('/admin');
+      }
+    });
+
+    // Cleanup subscription on unmount
+    return () => unsubscribe();
+  }, [navigate]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -33,14 +42,6 @@ const Login = () => {
   const goToHome = () => {
     navigate('/');
   };
-
-  onAuthStateChanged(auth, (user) => {
-    if (user) {
-      console.log("Usuario autenticado:", user);
-    } else {
-      console.log("No hay usuario autenticado");
-    }
-  });
 
   return (
     <>
