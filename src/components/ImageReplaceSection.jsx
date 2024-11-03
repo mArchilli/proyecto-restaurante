@@ -100,7 +100,7 @@ const ImageReplaceSection = ({ images, setFolder }) => {
   };
 
   return (
-    <div className="bg-white shadow-lg rounded-lg p-6 mb-8 w-full mx-auto">
+    <div className="bg-gray-200 shadow-lg rounded-lg p-6 mb-8 w-full mx-auto">
       <h2 className="mb-5 text-2xl font-semibold text-gray-800">Sección de Imágenes</h2>
       
       <label htmlFor="folderSelect" className="mb-2 text-gray-600 font-medium">

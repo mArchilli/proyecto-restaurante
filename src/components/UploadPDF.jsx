@@ -51,7 +51,7 @@ const UploadPDF = () => {
   }, []);
 
   return (
-    <div className="bg-white shadow-md rounded-lg p-6 mb-8 w-full">
+    <div className="bg-gray-200 shadow-md rounded-lg p-6 mb-8 w-full ">
       <h2 className="mb-5 text-2xl font-semibold text-gray-800">Cargar/Actualizar Menú PDF</h2>
 
       {pdfUrl ? (

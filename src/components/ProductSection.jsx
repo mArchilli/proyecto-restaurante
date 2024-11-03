@@ -23,7 +23,7 @@ const ProductSection = ({
 
   return (
     <div className="flex flex-col md:flex-row gap-4 w-full">
-      <div className="bg-white shadow-md rounded-lg p-6 mb-8 w-full md:w-1/2">
+      <div className="bg-gray-200 shadow-md rounded-lg p-6 mb-8 w-full md:w-1/2">
         <h2 className="mb-5 text-2xl font-semibold text-gray-800">Gestión de Productos</h2>
 
         <input
@@ -61,7 +61,7 @@ const ProductSection = ({
         <Button variant="outline" className='w-full'  onClick={handleAddProduct}> Guardar</Button>
       </div>
 
-      <div className="bg-white shadow-md rounded-lg p-6 mb-8 w-full md:w-1/2">
+      <div className="bg-gray-200 shadow-md rounded-lg p-6 mb-8 w-full md:w-1/2">
         <h2 className="mb-5 text-2xl font-semibold text-gray-800">Lista de Productos</h2>
 
         <label htmlFor="filterCategory" className="mb-2">

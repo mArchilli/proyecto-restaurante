@@ -1,4 +1,3 @@
-// import ImageUploadSection from "./ImageUploadSection";
 import ImageReplaceSection from "./ImageReplaceSection";
 import AboutSection from "./AboutSection";
 import ProductSection from "./ProductSection";
@@ -236,14 +235,6 @@ const ImageUpload = () => {
       <div className="flex flex-col items-center mt-24 mb-24 container mx-auto">
         <h1 className="mb-5 text-center">Panel de Administración</h1>
         
-        {/* <ImageUploadSection
-          selectedCategory={selectedCategory}
-          setFolder={setFolder}
-          setSelectedCategory={setSelectedCategory}
-          successMessage={successMessage}
-          errorMessage={errorMessage}
-        /> */}
-        
         <ImageReplaceSection
           setFolder={setFolder}
           successMessage={successMessage}
@@ -253,14 +244,20 @@ const ImageUpload = () => {
           handleReplaceImage={handleReplaceImage}
         />
         
-        <AboutSection
-          aboutText={aboutText}
-          setAboutText={setAboutText}
-          handleSubmit={handleSubmit}
-          submittedContent={submittedContent}
-        />
-
-        <UploadPDF/>
+        <div className="w-full flex flex-col md:flex-row">
+          <div className="w-full xl:w-1/2">
+            <AboutSection
+              aboutText={aboutText}
+              setAboutText={setAboutText}
+              handleSubmit={handleSubmit}
+              submittedContent={submittedContent}
+            />
+          </div>
+          <div className="w-full xl:w-1/2">
+            <UploadPDF />
+          </div>
+        </div>
+        
         
         <ProductSection
           productName={productName}
@@ -279,13 +276,6 @@ const ImageUpload = () => {
         />
         
         <Notification successMessage={successMessage} errorMessage={errorMessage} />
-
-        {/* <button
-          className="mb-5 px-4 py-2 bg-blue-500 text-white rounded"
-          onClick={goToHome}
-        >
-          Volver al sitio
-        </button> */}
 
         <Button variant="outline"  onClick={goToHome}> Volver al sitio</Button>
         
