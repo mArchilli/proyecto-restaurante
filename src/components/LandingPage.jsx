@@ -22,15 +22,15 @@ const LandingPage = () => {
       <Navbar />
       <Header />
 
-      <div data-aos="fade-right"  data-aos-delay="200">
+      <div data-aos="fade-up"  data-aos-delay="200">
         <About />
       </div>
 
-      <div data-aos="fade-left"  data-aos-delay="200">
+      <div data-aos="fade-up"  data-aos-delay="200">
         <GridMenu />
       </div>
 
-      <div data-aos="fade-right"  data-aos-delay="200">
+      <div data-aos="fade-up"  data-aos-delay="200">
         <Contact />
       </div>
 

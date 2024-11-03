@@ -144,7 +144,7 @@ const GridMenu = () => {
                 src={image.src}
                 alt={image.alt}
                 loading="lazy"
-                className="w-full h-60 object-cover object-center rounded-lg shadow-lg hover:opacity-80 transition-opacity duration-300"
+                className="w-full h-60 object-cover object-center rounded-lg shadow-lg hover:scale-105 hover:opacity-90 transition-transform duration-300 ease-in-out"
               />
             </figure>
           ))
@@ -189,7 +189,7 @@ const GridMenu = () => {
           },
         }}
       >
-        <Button variant="outline" onClick={() => setIsModalOpen(false)} className="absolute top-2 right-2">✖️</Button>
+        <Button variant="outline" onClick={() => setIsModalOpen(false)} className="absolute top-2 right-2 hover:scale-105 hover:opacity-90 transition-transform duration-300 ease-in-out">✖️</Button>
         {modalContent}
       </Modal>
     </section>

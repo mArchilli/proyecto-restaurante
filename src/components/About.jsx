@@ -34,7 +34,7 @@ const About = () => {
   }, []);
 
   return (
-    <section id="about" className="w-full lg:min-h-[500px] py-12 lg:py-16 bg-gray-200">
+    <section id="about" className="w-full xl:min-h-[500px] py-14 lg:py-16  bg-gray-200">
       <div className="container px-4 md:px-6 mx-auto">
         <div className="grid gap-6 lg:grid-cols-2 lg:gap-12 items-center">
           {/* Skeleton de la imagen */}
@@ -43,7 +43,7 @@ const About = () => {
               <img
                 src={imageUrl}
                 alt="Imagen de Tasca La Fundición"
-                className="w-full max-h-96 rounded-lg"
+                className="w-full max-h-96 rounded-lg shadow-lg hover:scale-105 hover:opacity-90 transition-transform duration-300 ease-in-out"
               />
               <figcaption className="sr-only">Imagen de Tasca La Fundición</figcaption>
             </figure>
