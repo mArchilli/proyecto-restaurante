@@ -56,12 +56,11 @@ const ImageReplaceSection = ({ images, setFolder }) => {
     setCroppedArea(croppedAreaPixels);
   }, []);
 
+  //Limitamos el tamaño de la imagen para que no entre en conflicto con los tiempos de carga
   const MAX_SIZE = 1048576; // 1 MB en bytes
   const resolutions = {
-    '1920x600': { width: 1920, height: 600 },
-    '800x800': { width: 800, height: 800 },
-    '1200x630': { width: 1200, height: 630 },
-    '400x300': { width: 400, height: 300 },
+    '826x240': { width: 826, height: 240 },
+    '400x240': { width: 400, height: 240 },
   };
 
   const handleSaveCroppedImage = async () => {
@@ -86,13 +85,23 @@ const ImageReplaceSection = ({ images, setFolder }) => {
 
   const handleImageSelection = (e) => {
     const file = e.target.files[0];
+    const allowedTypes = ['image/webp', 'image/jpeg', 'image/jpg', 'image/png'];
+  
     if (file) {
+      // Verificar el tipo de archivo
+      if (!allowedTypes.includes(file.type)) {
+        setErrorMessage("Formato de archivo no permitido. Por favor, selecciona una imagen en formato webp, jpg, jpeg o png.");
+        return;
+      }
+  
+      // Verificar el tamaño del archivo
       if (file.size > MAX_SIZE) {
         setErrorMessage("La imagen seleccionada supera el tamaño recomendado de 1 MB. Por favor, elige una imagen más ligera.");
         return;
       } else {
         setErrorMessage('');
       }
+  
       const reader = new FileReader();
       reader.onload = () => setSelectedImage(reader.result);
       reader.readAsDataURL(file);

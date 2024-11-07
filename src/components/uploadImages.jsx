@@ -244,7 +244,7 @@ const ImageUpload = () => {
           handleReplaceImage={handleReplaceImage}
         />
         
-        <div className="w-full flex flex-col md:flex-row">
+        <div className="w-full flex flex-col md:flex-row gap-4">
           <div className="w-full xl:w-1/2">
             <AboutSection
               aboutText={aboutText}

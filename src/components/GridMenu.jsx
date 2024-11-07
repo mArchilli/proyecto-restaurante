@@ -113,6 +113,9 @@ const GridMenu = () => {
   return (
     <section className="container mx-auto px-4 py-12 lg:py-16" id='menu'>
       <h2 className="text-3xl font-bold tracking-tighter text-center mb-4">Conoce nuestro menú</h2>
+      <p className="text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed mb-2 text-center">
+          Clickea en las imagenes para conocer mas en detalle nuestro menú.
+        </p>
 
       <Tabs defaultValue={activeTab} onValueChange={setActiveTab}>
         <TabsList className="grid w-full grid-cols-3 mb-8">
@@ -166,33 +169,35 @@ const GridMenu = () => {
       </div>
 
       <Modal
-        isOpen={isModalOpen}
-        onRequestClose={() => setIsModalOpen(false)}
-        ariaHideApp={false}
-        contentLabel="Menú"
-        style={{
-          overlay: {
-            backgroundColor: 'rgba(0, 0, 0, 0.5)',
-          },
-          content: {
-            top: '50%',
-            left: '50%',
-            right: 'auto',
-            bottom: 'auto',
-            marginRight: '-50%',
-            transform: 'translate(-50%, -50%)',
-            width: '80%',
-            maxWidth: '500px',
-            height: 'auto',
-            padding: '20px',
-            borderRadius: '8px',
-            backgroundColor: 'white',
-          },
-        }}
-      >
-        <Button variant="outline" onClick={() => setIsModalOpen(false)} className="absolute top-2 right-2 ">✖️</Button>
-        {modalContent}
-      </Modal>
+      isOpen={isModalOpen}
+      onRequestClose={() => setIsModalOpen(false)}
+      ariaHideApp={false}
+      contentLabel="Menú"
+      style={{
+        overlay: {
+          backgroundColor: 'rgba(0, 0, 0, 0.5)',
+        },
+        content: {
+          top: '50%',
+          left: '50%',
+          right: 'auto',
+          bottom: 'auto',
+          marginRight: '-50%',
+          transform: 'translate(-50%, -50%)',
+          width: '80%',
+          maxWidth: '500px',
+          maxHeight: '80vh', // Limita la altura del modal
+          overflowY: 'auto', // Permite el desplazamiento vertical
+          padding: '20px',
+          borderRadius: '8px',
+          backgroundColor: 'white',
+        },
+      }}
+    >
+      <Button variant="outline" onClick={() => setIsModalOpen(false)} className="absolute top-2 right-2">✖️</Button>
+      {modalContent}
+    </Modal>
+
     </section>
   );
 };
