@@ -3,6 +3,7 @@ import LandingPage from './components/LandingPage';
 import Login from './components/login';
 import UploadImages from './components/uploadImages';
 import ProtectedRoute from './components/ProtectedRoute';
+import NotFound from './components/NotFound';
 
 const App = () => {
   return (
@@ -17,6 +18,7 @@ const App = () => {
           </ProtectedRoute>
           } 
         /> 
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </Router>
   );
