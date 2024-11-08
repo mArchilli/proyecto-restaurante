@@ -2,7 +2,7 @@ import ImageReplaceSection from "./ImageReplaceSection";
 import AboutSection from "./AboutSection";
 import ProductSection from "./ProductSection";
 import Notification from "./Notification";
-import UploadPDF from "./uploadPdf";
+import UploadPDF from "./UploadPDF";
 import { useState, useEffect } from "react";
 import { storage, db } from "../services/firebase";
 import {
