@@ -1,0 +1,11 @@
+{
+    "rewrites": [
+      { "source": "/login", "destination": "/" },
+      { "source": "/admin", "destination": "/" }
+    ],
+    "routes": [
+      { "handle": "filesystem" },
+      { "src": "/(.*)", "dest": "/" }
+    ]
+  }
+  
