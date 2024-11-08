@@ -176,6 +176,7 @@ const GridMenu = () => {
       style={{
         overlay: {
           backgroundColor: 'rgba(0, 0, 0, 0.5)',
+          zIndex: "11",
         },
         content: {
           top: '50%',
