@@ -4,15 +4,16 @@ import { getFirestore } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
 import { getStorage } from "firebase/storage";
 
+
 // Tu configuración de Firebase
 const firebaseConfig = {
-  apiKey: "AIzaSyDT01NXtpZ2R5hlpWGh6RJYL7Xh9T6LPiU",
-  authDomain: "tasca-la-fundicion.firebaseapp.com",
-  projectId: "tasca-la-fundicion",
-  storageBucket: "tasca-la-fundicion.appspot.com",
-  messagingSenderId: "558414961450",
-  appId: "1:558414961450:web:a768a3fad3247fc1d69c53",
-  measurementId: "G-C6NH3K8BWQ"
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_FIREBASE_APP_ID,
+  measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID
 };
 
 // Inicializa Firebase
